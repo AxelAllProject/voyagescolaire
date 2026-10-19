@@ -1,58 +1,222 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="docs/images/banner.svg" alt="Voyages Scolaires — API REST de gestion des voyages scolaires" width="100%">
 </p>
 
-## About Laravel
+<p align="center">
+  <img src="https://img.shields.io/badge/Laravel-13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 13">
+  <img src="https://img.shields.io/badge/PHP-8.3%2B-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.3+">
+  <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
+  <img src="https://img.shields.io/badge/PHPUnit-tests-3C9CD7?style=for-the-badge" alt="PHPUnit">
+  <img src="https://img.shields.io/badge/langue-fran%C3%A7ais-0055A4?style=for-the-badge" alt="Langue : français">
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<p align="center">
+  <a href="#-installation">Installation</a> ·
+  <a href="#-modèle-de-données">Modèle de données</a> ·
+  <a href="#-endpoints">Endpoints</a> ·
+  <a href="#-erreurs">Erreurs</a> ·
+  <a href="#-tests">Tests</a>
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ✨ Présentation
 
-## Learning Laravel
+**Voyages Scolaires** est une API REST construite avec Laravel 13 pour organiser les sorties et voyages d'un établissement :
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- 🧭 **Voyages** : destination, dates, prix, participation des familles, nombre de places, transport ;
+- 🏫 **Classes** concernées par chaque voyage ;
+- 📄 **Pièces administratives** à fournir (autorisation de sortie, carte d'identité…).
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Toutes les réponses sont en **JSON** et tous les messages d'erreur sont en **français**.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## 🚀 Installation
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+> **Prérequis :** PHP 8.3+, Composer et Node.js.
 
 ```bash
-composer require laravel/boost --dev
+git clone https://github.com/AxelAllProject/voyagescolaire.git
+cd voyagescolaire
 
-php artisan boost:install
+composer install
+cp .env.example .env
+php artisan key:generate
+
+touch database/database.sqlite
+php artisan migrate
+
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+L'API est alors disponible sur **`http://127.0.0.1:8000/api`**.
 
-## Contributing
+## 🗂️ Modèle de données
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```mermaid
+erDiagram
+    VOYAGES ||--o{ CLASSE_VOYAGE : "concerne"
+    CLASSES ||--o{ CLASSE_VOYAGE : "participe"
+    VOYAGES ||--o{ PIECE_ADMINISTRATIVE_VOYAGE : "exige"
+    PIECES_ADMINISTRATIVES ||--o{ PIECE_ADMINISTRATIVE_VOYAGE : "requise pour"
 
-## Code of Conduct
+    VOYAGES {
+        bigint id PK
+        string titre
+        text description
+        string image "nullable"
+        string destination
+        date date_debut
+        date date_fin
+        decimal prix
+        decimal participation_familiale
+        int nb_places
+        string transport
+    }
+    CLASSES {
+        bigint id PK
+        string nom
+    }
+    PIECES_ADMINISTRATIVES {
+        bigint id PK
+        string nom
+        text description "nullable"
+    }
+    CLASSE_VOYAGE {
+        bigint classe_id FK
+        bigint voyage_id FK
+    }
+    PIECE_ADMINISTRATIVE_VOYAGE {
+        bigint piece_administrative_id FK
+        bigint voyage_id FK
+    }
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 📡 Endpoints
 
-## Security Vulnerabilities
+Toutes les routes sont préfixées par `/api`. Envoyez l'en-tête `Accept: application/json`. Les dates sont au format `AAAA-MM-JJ`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Voyages
 
-## License
+| Méthode  | URL                 | Action                                  | Succès |
+|----------|---------------------|-----------------------------------------|:------:|
+| `GET`    | `/api/voyages`      | Lister les voyages                      | `200`  |
+| `POST`   | `/api/voyages`      | Créer un voyage                         | `201`  |
+| `GET`    | `/api/voyages/{id}` | Afficher un voyage                      | `200`  |
+| `PUT`    | `/api/voyages/{id}` | Remplacer un voyage (tous les champs)   | `200`  |
+| `PATCH`  | `/api/voyages/{id}` | Modifier uniquement les champs envoyés  | `200`  |
+| `DELETE` | `/api/voyages/{id}` | Supprimer un voyage                     | `204`  |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+<details>
+<summary><strong>Champs et règles de validation</strong></summary>
+
+| Champ                     | Type   | Règles                                       |
+|---------------------------|--------|----------------------------------------------|
+| `titre`                   | texte  | obligatoire, 255 caractères max              |
+| `description`             | texte  | obligatoire                                  |
+| `image`                   | texte  | facultatif, 255 caractères max               |
+| `destination`             | texte  | obligatoire, 255 caractères max              |
+| `date_debut`              | date   | obligatoire                                  |
+| `date_fin`                | date   | obligatoire, postérieure ou égale à `date_debut` |
+| `prix`                    | nombre | obligatoire, ≥ 0                             |
+| `participation_familiale` | nombre | obligatoire, ≥ 0                             |
+| `nb_places`               | entier | obligatoire, ≥ 1                             |
+| `transport`               | texte  | obligatoire, 255 caractères max              |
+
+Avec `PATCH`, seuls les champs envoyés sont validés et modifiés. Avec `PUT`, tous les champs obligatoires doivent être envoyés.
+
+</details>
+
+### Exemple : créer un voyage
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/voyages \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "titre": "Découverte de Rome",
+    "description": "Visite du Colisée et du Vatican.",
+    "destination": "Rome",
+    "date_debut": "2027-03-01",
+    "date_fin": "2027-03-05",
+    "prix": 520.50,
+    "participation_familiale": 200,
+    "nb_places": 35,
+    "transport": "car"
+  }'
+```
+
+<details>
+<summary>Réponse <code>201 Created</code></summary>
+
+```json
+{
+  "id": 1,
+  "titre": "Découverte de Rome",
+  "description": "Visite du Colisée et du Vatican.",
+  "image": null,
+  "destination": "Rome",
+  "date_debut": "2027-03-01T00:00:00.000000Z",
+  "date_fin": "2027-03-05T00:00:00.000000Z",
+  "prix": "520.50",
+  "participation_familiale": "200.00",
+  "nb_places": 35,
+  "transport": "car",
+  "created_at": "2026-10-19T10:00:00.000000Z",
+  "updated_at": "2026-10-19T10:00:00.000000Z"
+}
+```
+
+</details>
+
+## ⚠️ Erreurs
+
+| Code  | Cas                            | Réponse                                         |
+|:-----:|--------------------------------|-------------------------------------------------|
+| `404` | Voyage ou route inexistant     | `{"message": "Ressource introuvable."}`          |
+| `405` | Méthode HTTP non autorisée     | `{"message": "Méthode non autorisée"}`           |
+| `422` | Données invalides              | `message` + détail par champ dans `errors`       |
+
+Exemple de réponse `422 Unprocessable Content` :
+
+```json
+{
+  "message": "Le champ description est obligatoire. (et 6 erreurs en plus)",
+  "errors": {
+    "description": ["Le champ description est obligatoire."],
+    "date_fin": ["Le champ date de fin doit être une date postérieure ou égale au date de début."],
+    "nb_places": ["Le champ nombre de places est obligatoire."]
+  }
+}
+```
+
+> Les traductions se trouvent dans `lang/fr` (paquet `laravel-lang`). Les noms de champs affichés dans les messages (`date de début`, `nombre de places`…) sont définis dans `lang/fr/validation.php`, section `attributes`.
+
+## 🧪 Tests
+
+```bash
+php artisan test
+```
+
+Les tests de l'API (`tests/Feature/VoyageApiTest.php`) couvrent la liste, l'affichage, la création, `PUT`, `PATCH`, la suppression, les erreurs 404 et 405, et les messages de validation en français.
+
+## 📁 Structure du projet
+
+```
+app/
+├── Http/Controllers/VoyageController.php   # CRUD des voyages
+└── Models/                                 # Voyage, Classe, PieceAdministrative
+bootstrap/app.php                           # Réponses JSON 404 / 405 en français
+database/
+├── factories/VoyageFactory.php
+└── migrations/                             # Tables + tables pivot
+lang/fr/                                    # Traductions françaises
+routes/api.php                              # Route::apiResource('voyages', …)
+tests/Feature/VoyageApiTest.php
+```
+
+---
+
+<p align="center">
+  <img src="docs/images/logo.svg" alt="Logo Voyages Scolaires" width="56"><br>
+  <sub>Voyages Scolaires · construit avec Laravel</sub>
+</p>
