@@ -16,7 +16,7 @@
     </x-slot:header>
 
     {{-- Filtres --}}
-    <div class="section-card p-3 p-md-4 mb-4">
+    <div data-reveal class="section-card p-3 p-md-4 mb-4">
         <form method="GET" action="{{ route('voyages.index') }}" class="row g-3 align-items-center">
             <div class="col-lg-5">
                 <div class="input-group">
@@ -38,7 +38,7 @@
     </div>
 
     @if ($voyages->isEmpty())
-        <div class="section-card p-5 text-center">
+        <div data-reveal class="section-card p-5 text-center">
             <div class="vs-icon-tile mx-auto mb-3"><i class="bi bi-airplane fs-4"></i></div>
             <h2 class="h5 fw-bold">Aucun voyage trouvé</h2>
             <p class="text-secondary mb-4">
@@ -59,7 +59,7 @@
 
         <div class="row g-4">
             @foreach ($voyages as $voyage)
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-reveal>
                     <x-voyage-card :voyage="$voyage" :variant="$loop->index" />
                 </div>
             @endforeach

@@ -53,18 +53,30 @@ php artisan serve
 
 Le site est alors disponible sur **http://127.0.0.1:8000** et l'API sur **http://127.0.0.1:8000/api**.
 
-Le seeder ajoute 8 classes (de la 6e A à la 3e B), 6 pièces administratives courantes, 4 voyages (Rome, Londres, Chamonix et une sortie passée au Futuroscope) et deux comptes de démonstration :
+### Données de démonstration (fixtures)
 
-| Email                   | Mot de passe | Rôle           |
-|-------------------------|--------------|----------------|
-| `admin@example.com`     | `password`   | Administrateur |
-| `personnel@example.com` | `password`   | Personnel      |
+`php artisan migrate:fresh --seed` remplit la base avec :
 
-> ⚠️ Ces comptes servent uniquement au développement. En production, créez les vrais comptes avec `php artisan utilisateur:creer`.
+- 8 classes (de la 6e A à la 3e B) et 6 pièces administratives courantes ;
+- 14 voyages : 4 rédigés à la main (Rome, Londres, Chamonix, Futuroscope) et 10 générés (à venir, en cours et passés), chacun avec ses classes et ses pièces ;
+- 4 comptes (mot de passe `password` pour tous) :
+
+| Email                        | Rôle           | État        |
+|------------------------------|----------------|-------------|
+| `admin@example.com`          | Administrateur | Validé      |
+| `personnel@example.com`      | Personnel      | Validé      |
+| `claire.martin@example.com`  | Personnel      | En attente  |
+| `karim.benali@example.com`   | Personnel      | En attente  |
+
+> ⚠️ Ces comptes servent uniquement au développement. Ne lancez pas le seeder en production.
+
+Dans les tests, les factories proposent des états prêts à l'emploi : `Voyage::factory()->passe()`, `->enCours()`, `->avecClassesEtPieces()`, `User::factory()->admin()`, `->enAttente()`, ainsi que `Classe::factory()` et `PieceAdministrative::factory()`.
 
 ## 🔐 Comptes et droits
 
-Il n'y a pas d'inscription publique : un administrateur crée les comptes du personnel en ligne de commande.
+**Inscription** : n'importe qui peut demander un compte sur `/register` (lien « Créer un compte » de la page de connexion). Le compte reçoit le rôle *Personnel* et reste **en attente** : impossible de se connecter ou d'obtenir un jeton d'API tant qu'un administrateur ne l'a pas validé dans la page **Comptes**. Les administrateurs voient dans le menu un badge avec le nombre d'inscriptions en attente.
+
+Depuis la page **Comptes**, un administrateur valide ou refuse les inscriptions, change le rôle d'un compte ou le supprime (jamais le sien). Il peut aussi créer directement un compte validé en ligne de commande :
 
 ```bash
 php artisan utilisateur:creer                       # questions interactives
@@ -78,6 +90,7 @@ php artisan utilisateur:creer --nom="Mme Martin" --email=martin@college.fr --rol
 | Supprimer un voyage                            | ❌       | ❌        | ✅             |
 | Consulter les classes et les pièces            | ❌       | ✅        | ✅             |
 | Ajouter, modifier, supprimer classes et pièces | ❌       | ❌        | ✅             |
+| Valider les inscriptions, gérer les comptes    | ❌       | ❌        | ✅             |
 
 La connexion se fait sur `/login` (lien « Espace personnel »). Elle est gérée par [Laravel Fortify](https://laravel.com/docs/fortify) et limitée à 5 tentatives par minute. Chacun peut changer son mot de passe dans **Mon compte**. Les droits sont définis dans `app/Policies/`.
 
@@ -250,6 +263,8 @@ php artisan test
 | `tests/Feature/VoyageApiTest.php`        | Toutes les routes de l'API, erreurs 404/405/422 en français            |
 | `tests/Feature/AutorisationTest.php`     | Connexion, déconnexion, mot de passe, droits visiteur / personnel / admin |
 | `tests/Feature/ApiAuthentificationTest.php` | Jetons Sanctum : obtention, révocation, accès refusés (401/403)     |
+| `tests/Feature/InscriptionTest.php`      | Inscription, compte en attente, validation et refus par un admin, rôles |
+| `tests/Feature/VoyageCardTest.php`       | Nombre de classes sur les cartes, sans requête SQL par carte          |
 
 ### Intégration continue
 

@@ -7,6 +7,7 @@ use App\Enums\Role;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -30,11 +31,34 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => Role::class,
+            'valide_le' => 'datetime',
         ];
     }
 
     public function estAdmin(): bool
     {
         return $this->role === Role::Admin;
+    }
+
+    /**
+     * Whether an administrator has approved the account (always true for accounts created by an admin).
+     */
+    public function estValide(): bool
+    {
+        return $this->valide_le !== null;
+    }
+
+    public function valider(): void
+    {
+        // valide_le n'est pas « fillable » : un formulaire d'inscription ne peut pas s'auto-valider.
+        $this->forceFill(['valide_le' => now()])->save();
+    }
+
+    /**
+     * Accounts waiting for an administrator's approval.
+     */
+    public function scopeEnAttente(Builder $query): void
+    {
+        $query->whereNull('valide_le');
     }
 }

@@ -51,7 +51,7 @@
         <div class="col-lg-8">
 
             {{-- Étape 1 : identité et destination --}}
-            <section class="section-card p-4 p-md-5 mb-4">
+            <section data-reveal class="section-card p-4 p-md-5 mb-4">
                 <div class="d-flex align-items-center gap-3 pb-3 mb-4 border-bottom">
                     <div class="section-icon"><i class="bi bi-globe-europe-africa"></i></div>
                     <div>
@@ -113,7 +113,7 @@
             </section>
 
             {{-- Étape 2 : dates et logistique --}}
-            <section class="section-card p-4 p-md-5 mb-4">
+            <section data-reveal class="section-card p-4 p-md-5 mb-4">
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-3 mb-4 border-bottom">
                     <div class="d-flex align-items-center gap-3">
                         <div class="section-icon"><i class="bi bi-calendar-range"></i></div>
@@ -187,7 +187,7 @@
             </section>
 
             {{-- Étape 3 : budget --}}
-            <section class="section-card p-4 p-md-5 mb-4">
+            <section data-reveal class="section-card p-4 p-md-5 mb-4">
                 <div class="d-flex align-items-center gap-3 pb-3 mb-4 border-bottom">
                     <div class="section-icon"><i class="bi bi-cash-coin"></i></div>
                     <div>
@@ -240,7 +240,7 @@
             </section>
 
             {{-- Étape 4 : classes et pièces administratives --}}
-            <section class="section-card p-4 p-md-5 mb-4">
+            <section data-reveal class="section-card p-4 p-md-5 mb-4">
                 <div class="d-flex align-items-center gap-3 pb-3 mb-4 border-bottom">
                     <div class="section-icon"><i class="bi bi-folder-check"></i></div>
                     <div>
@@ -317,7 +317,7 @@
                 </div>
             </section>
 
-            <div class="section-card p-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div data-reveal class="section-card p-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
                 <div class="small text-secondary">
                     <i class="bi bi-lock-fill text-success me-1"></i>
                     Vos saisies sont conservées en cas d'erreur.
@@ -334,7 +334,7 @@
         {{-- Aperçu en direct --}}
         <div class="col-lg-4">
             <div class="sticky-sidebar">
-                <div class="section-card overflow-hidden mb-4">
+                <div data-reveal class="section-card overflow-hidden mb-4">
                     <div class="preview-cover">
                         <img id="preview-image" src="{{ old('image', $voyage->image) }}" alt="Aperçu du voyage" class="{{ old('image', $voyage->image) ? '' : 'd-none' }}" onerror="this.classList.add('d-none')">
                         <div class="preview-cover-overlay"></div>
@@ -375,7 +375,7 @@
                     </div>
                 </div>
 
-                <div class="section-card p-4">
+                <div data-reveal class="section-card p-4">
                     <h3 class="h6 fw-bold d-flex align-items-center gap-2 mb-3">
                         <i class="bi bi-lightbulb-fill text-warning"></i> Conseils de saisie
                     </h3>

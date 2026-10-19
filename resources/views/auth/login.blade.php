@@ -12,6 +12,18 @@
                             <p class="text-secondary mb-0">Connectez-vous pour gérer les voyages de l'établissement.</p>
                         </div>
 
+                        @if (session('status') === 'inscription-en-attente')
+                            <div class="alert alert-success rounded-4 small d-flex gap-2" role="status">
+                                <i class="bi bi-hourglass-split fs-5"></i>
+                                <span><strong>Inscription enregistrée.</strong> Un administrateur doit valider votre compte avant votre première connexion.</span>
+                            </div>
+                        @elseif (session('status') === 'compte-en-attente')
+                            <div class="alert alert-warning rounded-4 small d-flex gap-2" role="status">
+                                <i class="bi bi-hourglass-split fs-5"></i>
+                                <span>Votre compte est en attente de validation par un administrateur.</span>
+                            </div>
+                        @endif
+
                         <form method="POST" action="{{ route('login') }}" novalidate>
                             @csrf
 
@@ -48,7 +60,7 @@
                         </form>
 
                         <p class="small text-secondary text-center mt-4 mb-0">
-                            Pas de compte ? Demandez-le à un administrateur de l'établissement.
+                            Pas encore de compte ? <a href="{{ route('register') }}" class="fw-semibold text-decoration-none">Créer un compte</a>
                         </p>
                     </div>
                 </div>

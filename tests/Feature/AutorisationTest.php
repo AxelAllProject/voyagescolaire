@@ -58,11 +58,6 @@ class AutorisationTest extends TestCase
         $this->assertGuest();
     }
 
-    public function test_there_is_no_public_registration(): void
-    {
-        $this->get('/register')->assertNotFound();
-    }
-
     public function test_staff_can_create_and_edit_voyages_but_not_delete_them(): void
     {
         $voyage = Voyage::factory()->create();

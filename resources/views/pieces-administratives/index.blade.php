@@ -14,7 +14,7 @@
             @unless ($peutGerer)
                 <x-lecture-seule>les pièces administratives</x-lecture-seule>
             @else
-            <section class="section-card p-4 sticky-sidebar">
+            <section data-reveal class="section-card p-4 sticky-sidebar">
                 <div class="d-flex align-items-center gap-3 mb-3">
                     <div class="section-icon"><i class="bi bi-plus-lg"></i></div>
                     <h2 class="h6 fw-bold mb-0">Ajouter une pièce</h2>
@@ -43,7 +43,7 @@
 
         <div class="col-lg-8 order-lg-1">
             @if ($pieces->isEmpty())
-                <section class="section-card p-5 text-center">
+                <section data-reveal class="section-card p-5 text-center">
                     <div class="vs-icon-tile mx-auto mb-3"><i class="bi bi-file-earmark-text fs-4"></i></div>
                     <h2 class="h5 fw-bold">Aucune pièce administrative</h2>
                     <p class="text-secondary mb-0">
@@ -53,7 +53,7 @@
             @else
                 <div class="d-grid gap-3">
                     @foreach ($pieces as $piece)
-                        <section class="section-card p-4 d-flex align-items-start gap-3">
+                        <section data-reveal class="section-card p-4 d-flex align-items-start gap-3">
                             <div class="section-icon"><i class="bi bi-file-earmark-text"></i></div>
                             <div class="flex-grow-1">
                                 <h2 class="h6 fw-bold mb-1">{{ $piece->nom }}</h2>

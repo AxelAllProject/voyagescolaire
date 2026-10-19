@@ -6,16 +6,16 @@
         <div class="container position-relative py-5">
             <div class="row align-items-center g-5">
                 <div class="col-lg-6">
-                    <span class="vs-pill mb-4">
+                    <span class="vs-pill mb-4" data-reveal>
                         <x-icon name="voyage" :size="16" />
                         Sorties et voyages scolaires
                     </span>
-                    <h1 class="mb-4">Organisez les voyages de vos classes, sans paperasse.</h1>
-                    <p class="lead mb-4">
+                    <h1 class="mb-4" data-reveal>Organisez les voyages de vos classes, sans paperasse.</h1>
+                    <p class="lead mb-4" data-reveal>
                         Destinations, dates, budget, places disponibles, classes concernées et pièces administratives :
                         tout est centralisé au même endroit.
                     </p>
-                    <div class="d-flex flex-wrap gap-3 mb-5">
+                    <div class="d-flex flex-wrap gap-3 mb-5" data-reveal>
                         <a href="{{ route('voyages.index') }}" class="btn btn-light btn-lg">Voir les voyages</a>
                         @can('create', App\Models\Voyage::class)
                             <a href="{{ route('voyages.create') }}" class="btn btn-outline-light btn-lg"><i class="bi bi-plus-lg me-1"></i> Créer un voyage</a>
@@ -23,7 +23,7 @@
                             <a href="{{ route('login') }}" class="btn btn-outline-light btn-lg"><i class="bi bi-box-arrow-in-right me-1"></i> Espace personnel</a>
                         @endcan
                     </div>
-                    <div class="row g-4 text-center text-sm-start">
+                    <div class="row g-4 text-center text-sm-start" data-reveal>
                         @foreach ([
                             [$stats['voyages'], $stats['voyages'] > 1 ? 'voyages à venir' : 'voyage à venir'],
                             [$stats['places'], 'places proposées'],
@@ -31,7 +31,7 @@
                             [$stats['pieces'], $stats['pieces'] > 1 ? 'pièces suivies' : 'pièce suivie'],
                         ] as [$valeur, $libelle])
                             <div class="col-6 col-sm-3">
-                                <div class="vs-hero-stat">{{ $valeur }}</div>
+                                <div class="vs-hero-stat" data-compteur="{{ $valeur }}">{{ $valeur }}</div>
                                 <div class="vs-hero-stat-label">{{ $libelle }}</div>
                             </div>
                         @endforeach
@@ -39,7 +39,7 @@
                 </div>
                 <div class="col-lg-6">
                     @php($prochain = $voyages->first())
-                    <div class="vs-globe" data-globe data-destinations='@json($voyages->pluck('destination'))'>
+                    <div class="vs-globe" data-reveal="zoom" data-globe data-destinations='@json($voyages->pluck('destination'))'>
                         {{-- Illustration affichée tant que le globe 3D n'est pas chargé (ou sans WebGL). --}}
                         <x-hero-illustration class="vs-globe-fallback" />
 
@@ -78,7 +78,7 @@
     {{-- Fonctionnalités --}}
     <section id="fonctionnalites" class="py-5">
         <div class="container py-lg-4">
-            <div class="text-center mx-auto mb-5" style="max-width: 640px">
+            <div class="text-center mx-auto mb-5" style="max-width: 640px" data-reveal>
                 <p class="vs-eyebrow mb-2">Fonctionnalités</p>
                 <h2 class="fw-bold mb-3">Tout ce qu'il faut pour préparer un voyage</h2>
                 <p class="text-secondary mb-0">Une seule application pour suivre chaque voyage, de la destination aux documents à rassembler.</p>
@@ -90,7 +90,7 @@
                     ['icon' => 'classe', 'titre' => 'Classes', 'texte' => 'Associez une ou plusieurs classes à un voyage et retrouvez en un clin d\'œil qui part où.', 'route' => 'classes.index', 'lien' => 'Gérer les classes'],
                     ['icon' => 'document', 'titre' => 'Pièces administratives', 'texte' => 'Listez les documents à fournir : autorisation de sortie, carte d\'identité, fiche sanitaire…', 'route' => 'pieces-administratives.index', 'lien' => 'Gérer les pièces'],
                 ] as $fonctionnalite)
-                    <div class="col-md-4">
+                    <div class="col-md-4" data-reveal>
                         <a href="{{ route($fonctionnalite['route']) }}" class="card vs-card vs-card-link h-100 p-4" data-tilt>
                             <div class="vs-icon-tile mb-4">
                                 <x-icon :name="$fonctionnalite['icon']" />
@@ -110,7 +110,7 @@
     {{-- Prochains voyages --}}
     <section id="voyages" class="py-5 vs-section-muted">
         <div class="container py-lg-4">
-            <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-5">
+            <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-5" data-reveal>
                 <div>
                     <p class="vs-eyebrow mb-2">À venir</p>
                     <h2 class="fw-bold mb-0">Prochains voyages</h2>
@@ -122,7 +122,7 @@
 
             <div class="row g-4">
                 @forelse ($voyages as $voyage)
-                    <div class="col-md-6 col-lg-4">
+                    <div class="col-md-6 col-lg-4" data-reveal>
                         <x-voyage-card :voyage="$voyage" :variant="$loop->index" />
                     </div>
                 @empty
@@ -148,7 +148,7 @@
     {{-- Comment ça marche --}}
     <section id="etapes" class="py-5">
         <div class="container py-lg-4">
-            <div class="text-center mx-auto mb-5" style="max-width: 640px">
+            <div class="text-center mx-auto mb-5" style="max-width: 640px" data-reveal>
                 <p class="vs-eyebrow mb-2">Comment ça marche</p>
                 <h2 class="fw-bold mb-0">Un voyage prêt en trois étapes</h2>
             </div>
@@ -159,7 +159,7 @@
                     ['titre' => 'Listez les documents', 'texte' => 'Définissez les pièces administratives que les familles peuvent avoir à fournir.', 'route' => 'pieces-administratives.index', 'lien' => 'Gérer les pièces'],
                     ['titre' => 'Créez le voyage', 'texte' => 'Destination, dates, budget et places, puis cochez les classes et les pièces demandées.', 'route' => 'voyages.create', 'lien' => 'Créer un voyage'],
                 ] as $etape)
-                    <div class="col-md-4 position-relative">
+                    <div class="col-md-4 position-relative" data-reveal>
                         <span class="vs-step-number mb-3">{{ $loop->iteration }}</span>
                         <h3 class="h5 fw-bold">{{ $etape['titre'] }}</h3>
                         <p class="text-secondary mb-2 px-lg-4">{{ $etape['texte'] }}</p>
@@ -174,7 +174,7 @@
     <section id="api" class="py-5 vs-api">
         <div class="container py-lg-4">
             <div class="row g-5 align-items-center">
-                <div class="col-lg-5">
+                <div class="col-lg-5" data-reveal="gauche">
                     <p class="vs-eyebrow mb-2" style="color: #7dd3fc">API REST</p>
                     <h2 class="fw-bold mb-3">Branchez vos outils sur l'API</h2>
                     <p class="mb-4">Réponses en JSON, validation et messages d'erreur en français. Toutes les routes sont préfixées par <code class="text-info">/api</code>.</p>
@@ -194,7 +194,7 @@
                         @endforeach
                     </ul>
                 </div>
-                <div class="col-lg-7">
+                <div class="col-lg-7" data-reveal>
                     <pre class="vs-code mb-0"><code><span class="c"># Créer un voyage</span>
 <span class="k">curl</span> -X POST {{ url('/api/voyages') }} \
   -H <span class="s">"Accept: application/json"</span> \

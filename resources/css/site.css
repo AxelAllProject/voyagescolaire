@@ -629,10 +629,157 @@ main {
     opacity: 1;
 }
 
+/* ---------------------------------------------------------------------------
+   Animations
+   La classe .vs-anim est posée sur <html> par un script en tête de page,
+   seulement si JavaScript est actif et que l'utilisateur n'a pas demandé
+   de réduire les animations : sans elle, tout reste visible et immobile.
+   --------------------------------------------------------------------------- */
+
+/* Apparition au défilement (data-reveal), en cascade grâce à --vs-delay. */
+.vs-anim [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    transition: opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: var(--vs-delay, 0ms);
+}
+
+.vs-anim [data-reveal='gauche'] {
+    transform: translate3d(-32px, 0, 0);
+}
+
+.vs-anim [data-reveal='zoom'] {
+    transform: scale(0.94);
+}
+
+.vs-anim [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Les cartes inclinables gardent leur transform 3D une fois apparues. */
+.vs-anim [data-reveal][data-tilt].is-visible {
+    transform: perspective(900px) rotateX(var(--vs-tilt-x, 0deg)) rotateY(var(--vs-tilt-y, 0deg)) translateY(var(--vs-lift, 0));
+}
+
+/* Pointillés qui avancent (trajectoires, sillages). */
+.vs-anim .vs-trajet {
+    animation: vs-defiler 2.4s linear infinite;
+}
+
+@keyframes vs-defiler {
+    to { stroke-dashoffset: -36; }
+}
+
+/* Avion en papier qui flotte dans les bannières. */
+.vs-anim .vs-flotte {
+    animation: vs-flotter-avion 4s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+@keyframes vs-flotter-avion {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(4px, -6px) rotate(-4deg); }
+}
+
+/* Nuages qui dérivent lentement dans le héros et les en-têtes. */
+.vs-anim .vs-nuages {
+    animation: vs-deriver 18s ease-in-out infinite alternate;
+}
+
+@keyframes vs-deriver {
+    to { transform: translateX(-40px); }
+}
+
+/* Logo : l'avion décolle au survol. */
+.navbar-brand svg {
+    transition: transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.navbar-brand:hover svg {
+    transform: rotate(-12deg) scale(1.08);
+}
+
+/* Barre de navigation : ombre dès qu'on a défilé. */
+.vs-navbar {
+    transition: box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.vs-navbar.is-scrolled {
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 24px -16px rgba(15, 23, 42, 0.35);
+}
+
+/* Boutons : léger soulèvement. */
+.btn {
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn:not(:disabled):hover {
+    transform: translateY(-1px);
+}
+
+.btn:not(:disabled):active {
+    transform: translateY(0);
+}
+
+/* Visuel des cartes de voyage : zoom doux au survol. */
+.vs-card-cover img,
+.vs-card-cover svg {
+    transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.vs-card:hover .vs-card-cover img,
+.vs-card:hover .vs-card-cover svg {
+    transform: scale(1.06);
+}
+
+/* Messages flash qui glissent depuis le haut. */
+.vs-anim .alert {
+    animation: vs-glisser 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes vs-glisser {
+    from { opacity: 0; transform: translate3d(0, -12px, 0); }
+}
+
+/* Badge qui pulse (inscriptions en attente). */
+.vs-anim .vs-pulse {
+    animation: vs-pulser 2s ease-in-out infinite;
+}
+
+@keyframes vs-pulser {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.6); }
+    50% { box-shadow: 0 0 0 6px rgba(250, 204, 21, 0); }
+}
+
+/* Avatar (initiales) de la page des comptes. */
+.vs-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--vs-gradient);
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .vs-globe-card,
     .vs-globe-canvas {
         animation: none;
+    }
+
+    .btn:not(:disabled):hover,
+    .navbar-brand:hover svg,
+    .vs-card:hover .vs-card-cover img,
+    .vs-card:hover .vs-card-cover svg {
+        transform: none;
     }
 
     [data-tilt] {

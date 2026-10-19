@@ -46,7 +46,9 @@ class CreerUtilisateur extends Command
             return self::FAILURE;
         }
 
+        // Créé par un administrateur : le compte est validé d'office.
         $user = User::create($donnees);
+        $user->valider();
 
         $this->components->info("Compte créé : {$user->email} ({$user->role->libelle()}).");
 

@@ -10,6 +10,6 @@
         </linearGradient>
     </defs>
     <rect width="160" height="160" rx="36" fill="url(#{{ $id }})"/>
-    <path d="M26 122 C 52 132, 70 118, 78 102" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 10"/>
+    <path class="vs-trajet" d="M26 122 C 52 132, 70 118, 78 102" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 10"/>
     <x-paper-plane />
 </svg>

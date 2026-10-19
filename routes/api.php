@@ -15,7 +15,7 @@ Route::apiResource('voyages', VoyageController::class)
     ->names('api.voyages');
 
 // Écriture : jeton obligatoire (en-tête Authorization: Bearer …).
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'compte.valide'])->group(function () {
     Route::delete('jetons/actuel', [JetonController::class, 'destroy'])->name('api.jetons.destroy');
 
     Route::apiResource('voyages', VoyageController::class)

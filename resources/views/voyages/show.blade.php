@@ -24,7 +24,7 @@
 
     <div class="row g-4">
         <div class="col-lg-8">
-            <article class="section-card overflow-hidden mb-4">
+            <article data-reveal class="section-card overflow-hidden mb-4">
                 <div class="vs-cover">
                     <x-voyage-cover :voyage="$voyage" :variant="$voyage->id" />
                     <x-voyage-statut :voyage="$voyage" class="position-absolute top-0 end-0 m-3 shadow-sm fs-6" />
@@ -37,7 +37,7 @@
 
             <div class="row g-4">
                 <div class="col-md-6">
-                    <section class="section-card p-4 h-100">
+                    <section data-reveal class="section-card p-4 h-100">
                         <div class="d-flex align-items-center gap-3 mb-3">
                             <div class="section-icon"><i class="bi bi-mortarboard"></i></div>
                             <h2 class="h6 fw-bold mb-0">Classes concernées</h2>
@@ -50,7 +50,7 @@
                     </section>
                 </div>
                 <div class="col-md-6">
-                    <section class="section-card p-4 h-100">
+                    <section data-reveal class="section-card p-4 h-100">
                         <div class="d-flex align-items-center gap-3 mb-3">
                             <div class="section-icon"><i class="bi bi-folder-check"></i></div>
                             <h2 class="h6 fw-bold mb-0">Pièces à fournir</h2>
@@ -79,7 +79,7 @@
 
         <div class="col-lg-4">
             <div class="sticky-sidebar">
-                <section class="section-card p-4 mb-4">
+                <section data-reveal class="section-card p-4 mb-4">
                     <h2 class="h6 fw-bold mb-3">En bref</h2>
                     <div class="row g-2">
                         <div class="col-6">
@@ -115,7 +115,7 @@
                     </div>
                 </section>
 
-                <section class="section-card p-4">
+                <section data-reveal class="section-card p-4">
                     <h2 class="h6 fw-bold mb-3">Budget par élève</h2>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item px-0 d-flex justify-content-between">

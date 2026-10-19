@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClasseController;
+use App\Http\Controllers\CompteController;
 use App\Http\Controllers\PieceAdministrativeController;
 use App\Http\Controllers\VoyageController;
 use App\Models\Classe;
@@ -23,8 +24,14 @@ Route::get('/', function () {
 
 // Réservé au personnel connecté ; les droits fins (rôles) sont vérifiés par les policies.
 // Déclaré avant les routes publiques pour que /voyages/create ne soit pas pris pour un voyage.
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'compte.valide'])->group(function () {
     Route::resource('voyages', VoyageController::class)->except(['index', 'show']);
+
+    // Gestion des comptes (administrateurs) : validation des inscriptions, rôles, suppression.
+    Route::resource('comptes', CompteController::class)
+        ->only(['index', 'update', 'destroy'])
+        ->parameters(['comptes' => 'user']);
+    Route::patch('comptes/{user}/valider', [CompteController::class, 'valider'])->name('comptes.valider');
 
     Route::resource('classes', ClasseController::class)
         ->except(['create', 'show'])

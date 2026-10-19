@@ -35,6 +35,12 @@ class JetonController extends Controller
             ]);
         }
 
+        if (! $user->estValide()) {
+            throw ValidationException::withMessages([
+                'email' => 'Votre compte est en attente de validation par un administrateur.',
+            ]);
+        }
+
         return response()->json([
             'jeton' => $user->createToken($identifiants['appareil'])->plainTextToken,
             'utilisateur' => $user->only(['id', 'name', 'email', 'role']),

@@ -12,7 +12,7 @@
     <div class="row g-4">
         <div class="col-lg-4 order-lg-2">
             @if ($peutGerer)
-                <section class="section-card p-4 sticky-sidebar">
+                <section data-reveal class="section-card p-4 sticky-sidebar">
                     <div class="d-flex align-items-center gap-3 mb-3">
                         <div class="section-icon"><i class="bi bi-plus-lg"></i></div>
                         <h2 class="h6 fw-bold mb-0">Ajouter une classe</h2>
@@ -34,7 +34,7 @@
         </div>
 
         <div class="col-lg-8 order-lg-1">
-            <section class="section-card overflow-hidden">
+            <section data-reveal class="section-card overflow-hidden">
                 @if ($classes->isEmpty())
                     <div class="p-5 text-center">
                         <div class="vs-icon-tile mx-auto mb-3"><i class="bi bi-mortarboard fs-4"></i></div>

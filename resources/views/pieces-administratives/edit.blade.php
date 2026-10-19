@@ -9,7 +9,7 @@
 
     <div class="row justify-content-center">
         <div class="col-lg-7">
-            <form action="{{ route('pieces-administratives.update', $piece) }}" method="POST" class="section-card p-4 p-md-5" novalidate>
+            <form action="{{ route('pieces-administratives.update', $piece) }}" method="POST" data-reveal class="section-card p-4 p-md-5" novalidate>
                 @csrf
                 @method('PUT')
                 <div class="mb-3">
