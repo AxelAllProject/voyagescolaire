@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-label="Voyages Scolaires — API REST de gestion des voyages scolaires">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1e3a8a"/>
+      <stop offset="0.55" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.08"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="300" rx="24" fill="url(#sky)"/>
+
+  <!-- Nuages -->
+  <g fill="#ffffff" fill-opacity="0.10">
+    <ellipse cx="930" cy="70" rx="90" ry="26"/>
+    <ellipse cx="985" cy="56" rx="56" ry="28"/>
+    <ellipse cx="1080" cy="230" rx="110" ry="30"/>
+    <ellipse cx="1135" cy="212" rx="60" ry="30"/>
+    <ellipse cx="700" cy="262" rx="80" ry="20"/>
+  </g>
+
+  <!-- Trajectoire -->
+  <path d="M690 230 C 800 230, 850 150, 945 140 S 1060 110, 1090 92" fill="none" stroke="#ffffff" stroke-opacity="0.6" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 14"/>
+  <circle cx="690" cy="230" r="9" fill="#ffffff" fill-opacity="0.9"/>
+  <circle cx="690" cy="230" r="18" fill="none" stroke="#ffffff" stroke-opacity="0.4" stroke-width="2"/>
+
+  <!-- Avion en papier -->
+  <g transform="translate(1062 52) scale(0.75)">
+    <path d="M36 80 L124 42 L96 120 L76 96 Z" fill="#ffffff"/>
+    <path d="M76 96 L124 42 L86 112 Z" fill="#dbeafe"/>
+    <path d="M76 96 L124 42" stroke="#93c5fd" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Logo -->
+  <g transform="translate(64 70)">
+    <rect width="160" height="160" rx="36" fill="url(#tile)" stroke="#ffffff" stroke-opacity="0.35" stroke-width="2"/>
+    <path d="M26 122 C 52 132, 70 118, 78 102" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 10"/>
+    <path d="M36 80 L124 42 L96 120 L76 96 Z" fill="#ffffff"/>
+    <path d="M76 96 L124 42 L86 112 Z" fill="#dbeafe"/>
+    <path d="M76 96 L124 42" stroke="#93c5fd" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Texte -->
+  <g font-family="'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif" fill="#ffffff">
+    <text x="262" y="138" font-size="58" font-weight="700" letter-spacing="-1">Voyages Scolaires</text>
+    <text x="264" y="182" font-size="24" fill-opacity="0.85">API REST de gestion des voyages scolaires</text>
+    <g transform="translate(264 206)">
+      <rect width="118" height="32" rx="16" fill="#ffffff" fill-opacity="0.18"/>
+      <text x="59" y="22" font-size="16" font-weight="600" text-anchor="middle">Laravel 13</text>
+      <rect x="128" width="98" height="32" rx="16" fill="#ffffff" fill-opacity="0.18"/>
+      <text x="177" y="22" font-size="16" font-weight="600" text-anchor="middle">PHP 8.3+</text>
+      <rect x="236" width="138" height="32" rx="16" fill="#ffffff" fill-opacity="0.18"/>
+      <text x="305" y="22" font-size="16" font-weight="600" text-anchor="middle">JSON · Français</text>
+    </g>
+  </g>
+</svg>
