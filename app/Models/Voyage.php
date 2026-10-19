@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Database\Factories\VoyageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -20,6 +22,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 ])]
 class Voyage extends Model
 {
+    /** @use HasFactory<VoyageFactory> */
+    use HasFactory;
+
     /**
      * Get the attributes that should be cast.
      *
