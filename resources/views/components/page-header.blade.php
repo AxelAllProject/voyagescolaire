@@ -6,7 +6,7 @@
 
     <div class="container position-relative">
         @if ($breadcrumbs)
-            <nav aria-label="Fil d'Ariane" class="mb-2">
+            <nav aria-label="Fil d'Ariane" class="mb-2" data-reveal="gauche">
                 <ol class="breadcrumb mb-0 small">
                     <li class="breadcrumb-item"><a href="{{ route('accueil') }}">Accueil</a></li>
                     @foreach ($breadcrumbs as $label => $url)
@@ -20,7 +20,7 @@
             </nav>
         @endif
 
-        <div class="d-flex flex-column flex-lg-row align-items-lg-end justify-content-between gap-3">
+        <div class="d-flex flex-column flex-lg-row align-items-lg-end justify-content-between gap-3" data-reveal>
             <div>
                 <h1 class="h2 mb-2">{{ $title }}</h1>
                 @if ($subtitle)

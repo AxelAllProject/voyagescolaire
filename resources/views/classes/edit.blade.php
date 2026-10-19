@@ -9,7 +9,7 @@
 
     <div class="row justify-content-center">
         <div class="col-lg-6">
-            <form action="{{ route('classes.update', $classe) }}" method="POST" class="section-card p-4 p-md-5" novalidate>
+            <form action="{{ route('classes.update', $classe) }}" method="POST" data-reveal class="section-card p-4 p-md-5" novalidate>
                 @csrf
                 @method('PUT')
                 <label for="nom" class="form-label">Nom de la classe <span class="required-star">*</span></label>

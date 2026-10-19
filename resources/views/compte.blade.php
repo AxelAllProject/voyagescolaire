@@ -15,7 +15,7 @@
 
     <div class="row justify-content-center">
         <div class="col-lg-7">
-            <form method="POST" action="{{ route('user-password.update') }}" class="section-card p-4 p-md-5" novalidate>
+            <form method="POST" action="{{ route('user-password.update') }}" data-reveal class="section-card p-4 p-md-5" novalidate>
                 @csrf
                 @method('PUT')
 
