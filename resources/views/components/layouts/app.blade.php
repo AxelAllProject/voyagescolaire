@@ -11,6 +11,13 @@
 
         <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
 
+        {{-- Active les animations avant l'affichage (évite un clignotement) ; rien sans JS ni avec « réduire les animations ». --}}
+        <script>
+            if (! window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.documentElement.classList.add('vs-anim');
+            }
+        </script>
+
         @fonts
 
         @vite(['resources/css/site.css', 'resources/js/site.js'])
@@ -40,6 +47,17 @@
                             <li class="nav-item">
                                 <a @class(['nav-link', 'active' => request()->routeIs('pieces-administratives.*')]) href="{{ route('pieces-administratives.index') }}">Pièces administratives</a>
                             </li>
+                            @can('viewAny', App\Models\User::class)
+                                @php($inscriptionsEnAttente = App\Models\User::enAttente()->count())
+                                <li class="nav-item">
+                                    <a @class(['nav-link d-flex align-items-center gap-1', 'active' => request()->routeIs('comptes.*')]) href="{{ route('comptes.index') }}">
+                                        Comptes
+                                        @if ($inscriptionsEnAttente > 0)
+                                            <span class="badge rounded-pill text-bg-warning vs-pulse" title="Inscriptions en attente">{{ $inscriptionsEnAttente }}</span>
+                                        @endif
+                                    </a>
+                                </li>
+                            @endcan
                             @can('create', App\Models\Voyage::class)
                                 <li class="nav-item ms-lg-2">
                                     <a class="btn btn-primary btn-sm" href="{{ route('voyages.create') }}">

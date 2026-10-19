@@ -142,9 +142,11 @@ return [
     |
     */
 
-    // Pas d'inscription publique : les comptes du personnel sont créés par un administrateur
-    // (php artisan utilisateur:creer). Seuls la connexion et le changement de mot de passe sont actifs.
+    // Inscription ouverte, mais un compte inscrit reste « en attente » jusqu'à sa validation par un
+    // administrateur (page Comptes). Un administrateur peut aussi créer un compte validé avec
+    // php artisan utilisateur:creer.
     'features' => [
+        Features::registration(),
         Features::updatePasswords(),
     ],
 
