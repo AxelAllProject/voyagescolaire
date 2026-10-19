@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Classe;
 use App\Models\PieceAdministrative;
+use App\Models\User;
 use App\Models\Voyage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -11,6 +12,13 @@ use Tests\TestCase;
 class VoyageCreateTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->actingAs(User::factory()->admin()->create());
+    }
 
     public function test_create_voyage_form_is_accessible(): void
     {

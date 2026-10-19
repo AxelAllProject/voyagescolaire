@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PieceAdministrative;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -18,6 +19,8 @@ class PieceAdministrativeController extends Controller
      */
     public function index(): View
     {
+        Gate::authorize('viewAny', PieceAdministrative::class);
+
         $pieces = PieceAdministrative::withCount('voyages')->orderBy('nom')->get();
 
         return view('pieces-administratives.index', compact('pieces'));
@@ -28,6 +31,8 @@ class PieceAdministrativeController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        Gate::authorize('create', PieceAdministrative::class);
+
         $piece = PieceAdministrative::create($this->validated($request));
 
         return redirect()
@@ -40,6 +45,8 @@ class PieceAdministrativeController extends Controller
      */
     public function edit(PieceAdministrative $piece): View
     {
+        Gate::authorize('update', $piece);
+
         return view('pieces-administratives.edit', compact('piece'));
     }
 
@@ -48,6 +55,8 @@ class PieceAdministrativeController extends Controller
      */
     public function update(Request $request, PieceAdministrative $piece): RedirectResponse
     {
+        Gate::authorize('update', $piece);
+
         $piece->update($this->validated($request, $piece));
 
         return redirect()
@@ -60,6 +69,8 @@ class PieceAdministrativeController extends Controller
      */
     public function destroy(PieceAdministrative $piece): RedirectResponse
     {
+        Gate::authorize('delete', $piece);
+
         $piece->delete();
 
         return redirect()

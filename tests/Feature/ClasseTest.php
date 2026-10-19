@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Classe;
+use App\Models\User;
 use App\Models\Voyage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -10,6 +11,13 @@ use Tests\TestCase;
 class ClasseTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->actingAs(User::factory()->admin()->create());
+    }
 
     public function test_the_classes_are_listed(): void
     {

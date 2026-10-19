@@ -5,11 +5,13 @@
             subtitle="Retrouvez tous les voyages de l'établissement, à venir comme passés."
             :breadcrumbs="['Voyages' => null]"
         >
-            <x-slot:actions>
-                <a href="{{ route('voyages.create') }}" class="btn btn-light">
-                    <i class="bi bi-plus-lg me-1"></i> Nouveau voyage
-                </a>
-            </x-slot:actions>
+            @can('create', App\Models\Voyage::class)
+                <x-slot:actions>
+                    <a href="{{ route('voyages.create') }}" class="btn btn-light">
+                        <i class="bi bi-plus-lg me-1"></i> Nouveau voyage
+                    </a>
+                </x-slot:actions>
+            @endcan
         </x-page-header>
     </x-slot:header>
 
@@ -46,7 +48,9 @@
                     Il n'y a aucun voyage dans cette catégorie pour le moment.
                 @endif
             </p>
-            <a href="{{ route('voyages.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Créer un voyage</a>
+            @can('create', App\Models\Voyage::class)
+                <a href="{{ route('voyages.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Créer un voyage</a>
+            @endcan
         </div>
     @else
         <p class="small text-secondary mb-3">

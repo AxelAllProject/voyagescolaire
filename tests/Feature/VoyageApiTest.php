@@ -4,13 +4,22 @@ namespace Tests\Feature;
 
 use App\Models\Classe;
 use App\Models\PieceAdministrative;
+use App\Models\User;
 use App\Models\Voyage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class VoyageApiTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Sanctum::actingAs(User::factory()->admin()->create());
+    }
 
     /**
      * A valid payload for creating a voyage.

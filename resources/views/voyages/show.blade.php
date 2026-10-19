@@ -7,14 +7,18 @@
             <x-slot:subtitle>
                 <i class="bi bi-geo-alt-fill"></i> {{ $voyage->destination }}
             </x-slot:subtitle>
-            <x-slot:actions>
-                <a href="{{ route('voyages.edit', $voyage) }}" class="btn btn-light">
-                    <i class="bi bi-pencil me-1"></i> Modifier
-                </a>
-                <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#supprimer-voyage">
-                    <i class="bi bi-trash3 me-1"></i> Supprimer
-                </button>
-            </x-slot:actions>
+            @can('update', $voyage)
+                <x-slot:actions>
+                    <a href="{{ route('voyages.edit', $voyage) }}" class="btn btn-light">
+                        <i class="bi bi-pencil me-1"></i> Modifier
+                    </a>
+                    @can('delete', $voyage)
+                        <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#supprimer-voyage">
+                            <i class="bi bi-trash3 me-1"></i> Supprimer
+                        </button>
+                    @endcan
+                </x-slot:actions>
+            @endcan
         </x-page-header>
     </x-slot:header>
 
@@ -41,7 +45,7 @@
                         @forelse ($voyage->classes as $classe)
                             <span class="badge rounded-pill text-bg-light border fs-6 fw-semibold me-1 mb-2">{{ $classe->nom }}</span>
                         @empty
-                            <p class="small text-secondary mb-0">Aucune classe associée. <a href="{{ route('voyages.edit', $voyage) }}">Ajouter des classes</a></p>
+                            <p class="small text-secondary mb-0">Aucune classe associée. @can('update', $voyage)<a href="{{ route('voyages.edit', $voyage) }}">Ajouter des classes</a>@endcan</p>
                         @endforelse
                     </section>
                 </div>
@@ -66,7 +70,7 @@
                                 @endforeach
                             </ul>
                         @else
-                            <p class="small text-secondary mb-0">Aucune pièce demandée. <a href="{{ route('voyages.edit', $voyage) }}">Ajouter des pièces</a></p>
+                            <p class="small text-secondary mb-0">Aucune pièce demandée. @can('update', $voyage)<a href="{{ route('voyages.edit', $voyage) }}">Ajouter des pièces</a>@endcan</p>
                         @endif
                     </section>
                 </div>
@@ -135,10 +139,12 @@
         </div>
     </div>
 
-    <x-confirm-delete
-        id="supprimer-voyage"
-        :action="route('voyages.destroy', $voyage)"
-        title="Supprimer ce voyage ?"
-        :message="'Le voyage « '.$voyage->titre.' » sera définitivement supprimé.'"
-    />
+    @can('delete', $voyage)
+        <x-confirm-delete
+            id="supprimer-voyage"
+            :action="route('voyages.destroy', $voyage)"
+            title="Supprimer ce voyage ?"
+            :message="'Le voyage « '.$voyage->titre.' » sera définitivement supprimé.'"
+        />
+    @endcan
 </x-layouts.app>

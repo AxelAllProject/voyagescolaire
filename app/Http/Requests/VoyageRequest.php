@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Voyage;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -11,6 +12,18 @@ use Illuminate\Foundation\Http\FormRequest;
  */
 class VoyageRequest extends FormRequest
 {
+    /**
+     * Creating needs the "create" permission, updating the "update" permission on the voyage.
+     */
+    public function authorize(): bool
+    {
+        $voyage = $this->route('voyage');
+
+        return $voyage
+            ? (bool) $this->user()?->can('update', $voyage)
+            : (bool) $this->user()?->can('create', Voyage::class);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

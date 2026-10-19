@@ -498,6 +498,13 @@ main {
     --bs-btn-font-size: 0.875rem;
 }
 
+/* Page de connexion */
+.vs-auth {
+    background: var(--vs-gradient);
+    position: relative;
+    overflow: hidden;
+}
+
 /* Globe 3D de l'accueil */
 .vs-globe {
     position: relative;

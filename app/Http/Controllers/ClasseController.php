@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Classe;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -18,6 +19,8 @@ class ClasseController extends Controller
      */
     public function index(): View
     {
+        Gate::authorize('viewAny', Classe::class);
+
         $classes = Classe::withCount('voyages')->orderBy('nom')->get();
 
         return view('classes.index', compact('classes'));
@@ -28,6 +31,8 @@ class ClasseController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        Gate::authorize('create', Classe::class);
+
         $classe = Classe::create($this->validated($request));
 
         return redirect()
@@ -40,6 +45,8 @@ class ClasseController extends Controller
      */
     public function edit(Classe $classe): View
     {
+        Gate::authorize('update', $classe);
+
         return view('classes.edit', compact('classe'));
     }
 
@@ -48,6 +55,8 @@ class ClasseController extends Controller
      */
     public function update(Request $request, Classe $classe): RedirectResponse
     {
+        Gate::authorize('update', $classe);
+
         $classe->update($this->validated($request, $classe));
 
         return redirect()
@@ -60,6 +69,8 @@ class ClasseController extends Controller
      */
     public function destroy(Classe $classe): RedirectResponse
     {
+        Gate::authorize('delete', $classe);
+
         $classe->delete();
 
         return redirect()

@@ -3,12 +3,20 @@
 namespace Tests\Feature;
 
 use App\Models\PieceAdministrative;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class PieceAdministrativeTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->actingAs(User::factory()->admin()->create());
+    }
 
     public function test_the_pieces_are_listed(): void
     {

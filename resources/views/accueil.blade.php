@@ -17,7 +17,11 @@
                     </p>
                     <div class="d-flex flex-wrap gap-3 mb-5">
                         <a href="{{ route('voyages.index') }}" class="btn btn-light btn-lg">Voir les voyages</a>
-                        <a href="{{ route('voyages.create') }}" class="btn btn-outline-light btn-lg"><i class="bi bi-plus-lg me-1"></i> Créer un voyage</a>
+                        @can('create', App\Models\Voyage::class)
+                            <a href="{{ route('voyages.create') }}" class="btn btn-outline-light btn-lg"><i class="bi bi-plus-lg me-1"></i> Créer un voyage</a>
+                        @else
+                            <a href="{{ route('login') }}" class="btn btn-outline-light btn-lg"><i class="bi bi-box-arrow-in-right me-1"></i> Espace personnel</a>
+                        @endcan
                     </div>
                     <div class="row g-4 text-center text-sm-start">
                         @foreach ([
@@ -129,9 +133,11 @@
                             </div>
                             <h3 class="h5 fw-bold">Aucun voyage prévu pour le moment</h3>
                             <p class="text-secondary mb-4">Commencez par créer le premier voyage de l'établissement.</p>
-                            <div>
-                                <a href="{{ route('voyages.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Créer un voyage</a>
-                            </div>
+                            @can('create', App\Models\Voyage::class)
+                                <div>
+                                    <a href="{{ route('voyages.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Créer un voyage</a>
+                                </div>
+                            @endcan
                         </div>
                     </div>
                 @endforelse

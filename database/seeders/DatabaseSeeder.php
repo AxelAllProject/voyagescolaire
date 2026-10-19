@@ -15,11 +15,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Comptes de démonstration (mot de passe : « password »). À ne pas utiliser en production.
+        User::factory()->admin()->create([
+            'name' => 'Administrateur',
+            'email' => 'admin@example.com',
+        ]);
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Personnel',
+            'email' => 'personnel@example.com',
         ]);
 
         $this->call([

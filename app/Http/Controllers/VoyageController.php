@@ -8,6 +8,7 @@ use App\Models\PieceAdministrative;
 use App\Models\Voyage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 /**
@@ -45,6 +46,8 @@ class VoyageController extends Controller
      */
     public function create(): View
     {
+        Gate::authorize('create', Voyage::class);
+
         return view('voyages.create', [
             'voyage' => new Voyage,
             ...$this->formOptions(),
@@ -82,6 +85,8 @@ class VoyageController extends Controller
      */
     public function edit(Voyage $voyage): View
     {
+        Gate::authorize('update', $voyage);
+
         $voyage->load('classes', 'piecesAdministratives');
 
         return view('voyages.edit', [
@@ -113,6 +118,8 @@ class VoyageController extends Controller
      */
     public function destroy(Voyage $voyage): RedirectResponse
     {
+        Gate::authorize('delete', $voyage);
+
         $voyage->delete();
 
         return redirect()
