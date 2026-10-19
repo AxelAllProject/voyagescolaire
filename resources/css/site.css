@@ -1,0 +1,223 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+:root {
+    --vs-navy: #1e3a8a;
+    --vs-blue: #2563eb;
+    --vs-cyan: #06b6d4;
+    --vs-sky: #dbeafe;
+    --vs-ink: #0f172a;
+    --vs-gradient: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #06b6d4 100%);
+
+    --bs-body-font-family: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --bs-body-color: #334155;
+    --bs-primary: #2563eb;
+    --bs-primary-rgb: 37, 99, 235;
+    --bs-link-color: #2563eb;
+    --bs-link-color-rgb: 37, 99, 235;
+    --bs-link-hover-color: #1e3a8a;
+    --bs-link-hover-color-rgb: 30, 58, 138;
+}
+
+h1, h2, h3, h4, h5, .navbar-brand {
+    color: var(--vs-ink);
+    letter-spacing: -0.02em;
+}
+
+.btn {
+    --bs-btn-border-radius: 999px;
+    --bs-btn-font-weight: 600;
+    --bs-btn-padding-x: 1.4rem;
+    --bs-btn-padding-y: 0.65rem;
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--vs-blue);
+    --bs-btn-border-color: var(--vs-blue);
+    --bs-btn-hover-bg: var(--vs-navy);
+    --bs-btn-hover-border-color: var(--vs-navy);
+    --bs-btn-active-bg: var(--vs-navy);
+    --bs-btn-active-border-color: var(--vs-navy);
+}
+
+.btn-light {
+    --bs-btn-color: var(--vs-navy);
+}
+
+/* Barre de navigation */
+.vs-navbar {
+    backdrop-filter: blur(12px);
+    background-color: rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.vs-navbar .nav-link {
+    font-weight: 500;
+    color: #475569;
+}
+
+.vs-navbar .nav-link:hover {
+    color: var(--vs-blue);
+}
+
+/* Héros */
+.vs-hero {
+    background: var(--vs-gradient);
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.vs-hero h1 {
+    color: #fff;
+    font-weight: 700;
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    line-height: 1.05;
+}
+
+.vs-hero .lead {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.vs-hero-decor {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.vs-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.vs-wave {
+    display: block;
+    width: 100%;
+    height: 64px;
+    margin-top: -1px;
+}
+
+/* Sections */
+.vs-eyebrow {
+    color: var(--vs-blue);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.vs-section-muted {
+    background: #f8fafc;
+}
+
+.vs-card {
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 1.25rem;
+    box-shadow: 0 10px 30px -18px rgba(30, 58, 138, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.vs-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px -20px rgba(30, 58, 138, 0.5);
+}
+
+.vs-icon-tile {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--vs-gradient);
+    color: #fff;
+}
+
+/* Étapes */
+.vs-step-number {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--vs-sky);
+    color: var(--vs-navy);
+    font-weight: 700;
+}
+
+.vs-steps {
+    position: relative;
+}
+
+@media (min-width: 768px) {
+    .vs-steps::before {
+        content: '';
+        position: absolute;
+        top: 22px;
+        left: 16%;
+        right: 16%;
+        border-top: 3px dotted #93c5fd;
+    }
+}
+
+/* API */
+.vs-api {
+    background: var(--vs-ink);
+    color: #cbd5e1;
+}
+
+.vs-api h2 {
+    color: #fff;
+}
+
+.vs-code {
+    background: #020617;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 1rem;
+    color: #e2e8f0;
+    font-size: 0.875rem;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+}
+
+.vs-code .k { color: #7dd3fc; }
+.vs-code .s { color: #86efac; }
+.vs-code .c { color: #64748b; }
+
+.vs-method {
+    display: inline-block;
+    min-width: 4.5rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.4rem;
+    font-family: var(--bs-font-monospace);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.vs-method-get { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+.vs-method-post { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+.vs-method-put { background: rgba(234, 179, 8, 0.15); color: #facc15; }
+.vs-method-delete { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+.vs-api .list-group-item {
+    background: transparent;
+    border-color: rgba(148, 163, 184, 0.15);
+    color: #e2e8f0;
+}
+
+/* Pied de page */
+.vs-footer {
+    background: #f8fafc;
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+}
