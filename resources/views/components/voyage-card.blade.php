@@ -1,6 +1,6 @@
 @props(['voyage', 'variant' => 0])
 
-<article class="card vs-card h-100">
+<article class="card vs-card h-100" data-tilt>
     <a href="{{ route('voyages.show', $voyage) }}" class="vs-card-link d-flex flex-column h-100">
         <div class="vs-card-cover position-relative">
             <x-voyage-cover :voyage="$voyage" :variant="$variant" />

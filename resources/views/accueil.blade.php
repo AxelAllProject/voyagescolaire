@@ -34,7 +34,34 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <x-hero-illustration class="img-fluid w-100" />
+                    @php($prochain = $voyages->first())
+                    <div class="vs-globe" data-globe data-destinations='@json($voyages->pluck('destination'))'>
+                        {{-- Illustration affichée tant que le globe 3D n'est pas chargé (ou sans WebGL). --}}
+                        <x-hero-illustration class="vs-globe-fallback" />
+
+                        <div class="vs-globe-card vs-globe-card-haut">
+                            <span class="vs-globe-card-icone bg-primary-subtle text-primary"><i class="bi bi-geo-alt-fill fs-5"></i></span>
+                            <span>
+                                @if ($prochain)
+                                    <span class="d-block fw-bold">{{ \Illuminate\Support\Str::before($prochain->destination, ',') }} · {{ $prochain->dureeEnJours() }} jours</span>
+                                    <span class="d-block small text-secondary">{{ $prochain->nb_places }} places · départ le {{ $prochain->date_debut->translatedFormat('j F') }}</span>
+                                @else
+                                    <span class="d-block fw-bold">Votre prochain voyage</span>
+                                    <span class="d-block small text-secondary">Depuis Paris, partout en Europe</span>
+                                @endif
+                            </span>
+                        </div>
+
+                        <div class="vs-globe-card vs-globe-card-bas">
+                            <span class="vs-globe-card-icone bg-success-subtle text-success"><i class="bi bi-check-lg fs-4"></i></span>
+                            <span>
+                                <span class="d-block fw-bold">Autorisation reçue</span>
+                                <span class="d-block small text-secondary">Pièces administratives</span>
+                            </span>
+                        </div>
+
+                        <span class="vs-globe-indice"><i class="bi bi-hand-index me-1"></i> Faites glisser pour tourner le globe</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -60,7 +87,7 @@
                     ['icon' => 'document', 'titre' => 'Pièces administratives', 'texte' => 'Listez les documents à fournir : autorisation de sortie, carte d\'identité, fiche sanitaire…', 'route' => 'pieces-administratives.index', 'lien' => 'Gérer les pièces'],
                 ] as $fonctionnalite)
                     <div class="col-md-4">
-                        <a href="{{ route($fonctionnalite['route']) }}" class="card vs-card vs-card-link h-100 p-4">
+                        <a href="{{ route($fonctionnalite['route']) }}" class="card vs-card vs-card-link h-100 p-4" data-tilt>
                             <div class="vs-icon-tile mb-4">
                                 <x-icon :name="$fonctionnalite['icon']" />
                             </div>
