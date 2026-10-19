@@ -18,6 +18,7 @@ class VoyageFactory extends Factory
     public function definition(): array
     {
         $dateDebut = fake()->dateTimeBetween('+1 month', '+6 months');
+        $prix = fake()->randomFloat(2, 100, 1500);
 
         return [
             'titre' => 'Voyage à '.fake()->city(),
@@ -26,8 +27,9 @@ class VoyageFactory extends Factory
             'destination' => fake()->city(),
             'date_debut' => $dateDebut->format('Y-m-d'),
             'date_fin' => (clone $dateDebut)->modify('+'.fake()->numberBetween(1, 10).' days')->format('Y-m-d'),
-            'prix' => fake()->randomFloat(2, 100, 1500),
-            'participation_familiale' => fake()->randomFloat(2, 50, 500),
+            'prix' => $prix,
+            // Toujours inférieure au prix, comme l'exige la validation.
+            'participation_familiale' => round($prix * fake()->randomFloat(2, 0.3, 0.8), 2),
             'nb_places' => fake()->numberBetween(10, 60),
             'transport' => fake()->randomElement(['car', 'train', 'avion']),
         ];
