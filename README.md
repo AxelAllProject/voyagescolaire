@@ -1,58 +1,88 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# EduVoyage — Application de Gestion des Voyages Scolaires
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Application web et API développée avec **Laravel 13** et **Bootstrap 5.3** permettant de concevoir, planifier et administrer les voyages scolaires d'un établissement (destinations, dates, budget, classes concernées et pièces administratives requises).
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fonctionnalités principales
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 1. Formulaire de création d'un voyage scolaire (`/voyages/create`)
+- **Interface UI/UX moderne (Bootstrap 5.3 & Bootstrap Icons)** :
+  - Découpage ergonomique en **4 étapes** :
+    1. *Informations générales & Destination* (`titre`, `destination`, `image`, `description`)
+    2. *Dates du séjour & Logistique* (`date_debut`, `date_fin`, `transport`, `nb_places`)
+    3. *Budget & Participation familiale* (`prix`, `participation_familiale`)
+    4. *Classes concernées & Dossier administratif* (`classes[]`, `pieces_administratives[]`)
+  - **Aperçu temps réel (Live Preview)** en colonne latérale sticky : mise à jour instantanée de la carte du voyage, calcul automatique de la durée en jours/nuits, de la part subventionnée par l'établissement et du budget global estimé.
+- **Système de gestion des erreurs de validation** :
+  - Messages d'erreur personnalisés en français dans `VoyageController::store()`.
+  - Bannière récapitulative globale en haut de page lorsque `$errors->any()` est vrai.
+  - Mise en évidence individuelle des champs invalides via la classe Bootstrap `.is-invalid` et affichage du message sous chaque champ avec `@error('...') <div class="invalid-feedback">`.
+- **Conservation des saisies (`old()`)** :
+  - Toutes les valeurs saisies par l'utilisateur (`input`, `textarea`, `select`, `checkbox`) sont intégralement conservées via l'helper `old()` en cas d'erreur de validation.
+- **Messages Flash (`session('success')` / `session('error')`)** :
+  - Affichage d'une alerte Bootstrap dismissible confirmant l'enregistrement du voyage après redirection.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Architecture & Routes
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Routes Web (`routes/web.php`)
+Les routes Web bénéficient du middleware `web` (gestion de session, protection CSRF, partage automatique de `$errors` et conservation de `old()`).
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Méthode | URI | Nom de la route | Action du contrôleur | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `GET` | `/voyages/create` | `voyages.create` | `VoyageController@create` | Affiche le formulaire Bootstrap de création d'un voyage |
+| `POST` | `/voyages` | `voyages.store` | `VoyageController@store` | Valide les données, crée le voyage et redirige avec un message flash |
+| `GET` | `/voyages` | `voyages.index` | `VoyageController@index` | Liste les voyages enregistrés |
+| `GET` | `/voyages/{voyage}` | `voyages.show` | `VoyageController@show` | Affiche les détails d'un voyage |
+| `PUT/PATCH` | `/voyages/{voyage}` | `voyages.update` | `VoyageController@update` | Met à jour un voyage existant |
+| `DELETE` | `/voyages/{voyage}` | `voyages.destroy` | `VoyageController@destroy` | Supprime un voyage |
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Routes API (`routes/api.php`)
+Les routes API sont préfixées par `/api` et leurs noms par `api.voyages.*`.
 
-## Agentic Development
+---
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Règles de validation (`VoyageController::store`)
+
+| Champ | Règles Laravel | Description |
+| :--- | :--- | :--- |
+| `titre` | `required \| string \| max:255` | Intitulé du voyage scolaire |
+| `destination` | `required \| string \| max:255` | Ville et pays de destination |
+| `image` | `nullable \| string \| max:255` | URL ou chemin de l'image d'illustration |
+| `description` | `required \| string` | Programme détaillé et objectifs pédagogiques |
+| `date_debut` | `required \| date` | Date de départ |
+| `date_fin` | `required \| date \| after_or_equal:date_debut` | Date de retour (postérieure ou égale au départ) |
+| `transport` | `required \| string \| max:255` | Moyen de transport principal |
+| `nb_places` | `required \| integer \| min:1` | Capacité maximale d'élèves |
+| `prix` | `required \| numeric \| min:0` | Coût réel par élève (€) |
+| `participation_familiale` | `required \| numeric \| min:0 \| lte:prix` | Participation demandée aux familles (≤ coût réel) |
+| `classes` | `nullable \| array` (`exists:classes,id`) | Identifiants des classes concernées |
+| `pieces_administratives` | `nullable \| array` (`exists:pieces_administratives,id`) | Identifiants des pièces administratives requises |
+
+---
+
+## Installation & Démarrage rapide
 
 ```bash
-composer require laravel/boost --dev
+# 1. Installer les dépendances PHP
+composer install
 
-php artisan boost:install
+# 2. Configurer l'environnement et la base SQLite
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate
+
+# 3. Lancer le serveur de développement
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Accédez ensuite au formulaire sur : **[http://127.0.0.1:8000/voyages/create](http://127.0.0.1:8000/voyages/create)**
 
-## Contributing
+## Tests automatisés
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan test
+```
