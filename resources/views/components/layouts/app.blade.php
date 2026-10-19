@@ -33,17 +33,47 @@
                         <li class="nav-item">
                             <a @class(['nav-link', 'active' => request()->routeIs('voyages.*') && ! request()->routeIs('voyages.create')]) href="{{ route('voyages.index') }}">Voyages</a>
                         </li>
-                        <li class="nav-item">
-                            <a @class(['nav-link', 'active' => request()->routeIs('classes.*')]) href="{{ route('classes.index') }}">Classes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a @class(['nav-link', 'active' => request()->routeIs('pieces-administratives.*')]) href="{{ route('pieces-administratives.index') }}">Pièces administratives</a>
-                        </li>
-                        <li class="nav-item ms-lg-2">
-                            <a class="btn btn-primary btn-sm" href="{{ route('voyages.create') }}">
-                                <i class="bi bi-plus-lg me-1"></i> Nouveau voyage
-                            </a>
-                        </li>
+                        @auth
+                            <li class="nav-item">
+                                <a @class(['nav-link', 'active' => request()->routeIs('classes.*')]) href="{{ route('classes.index') }}">Classes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a @class(['nav-link', 'active' => request()->routeIs('pieces-administratives.*')]) href="{{ route('pieces-administratives.index') }}">Pièces administratives</a>
+                            </li>
+                            @can('create', App\Models\Voyage::class)
+                                <li class="nav-item ms-lg-2">
+                                    <a class="btn btn-primary btn-sm" href="{{ route('voyages.create') }}">
+                                        <i class="bi bi-plus-lg me-1"></i> Nouveau voyage
+                                    </a>
+                                </li>
+                            @endcan
+                            <li class="nav-item dropdown ms-lg-1">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-circle fs-5"></i>
+                                    <span class="d-lg-none">{{ auth()->user()->name }}</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 p-2">
+                                    <li class="px-3 py-2">
+                                        <div class="fw-semibold text-dark">{{ auth()->user()->name }}</div>
+                                        <div class="small text-secondary">{{ auth()->user()->role->libelle() }}</div>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item rounded-3" href="{{ route('compte') }}"><i class="bi bi-key me-2"></i>Mon compte</a></li>
+                                    <li>
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item rounded-3"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        @else
+                            <li class="nav-item ms-lg-2">
+                                <a class="btn btn-primary btn-sm" href="{{ route('login') }}">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i> Espace personnel
+                                </a>
+                            </li>
+                        @endauth
                     </ul>
                 </div>
             </div>
@@ -71,8 +101,10 @@
                 </div>
                 <ul class="nav small">
                     <li class="nav-item"><a class="nav-link link-secondary px-2" href="{{ route('voyages.index') }}">Voyages</a></li>
-                    <li class="nav-item"><a class="nav-link link-secondary px-2" href="{{ route('classes.index') }}">Classes</a></li>
-                    <li class="nav-item"><a class="nav-link link-secondary px-2" href="{{ route('pieces-administratives.index') }}">Pièces administratives</a></li>
+                    @auth
+                        <li class="nav-item"><a class="nav-link link-secondary px-2" href="{{ route('classes.index') }}">Classes</a></li>
+                        <li class="nav-item"><a class="nav-link link-secondary px-2" href="{{ route('pieces-administratives.index') }}">Pièces administratives</a></li>
+                    @endauth
                     <li class="nav-item"><a class="nav-link link-secondary px-2" href="{{ route('accueil') }}#api">API</a></li>
                 </ul>
                 <p class="mb-0 small text-secondary">&copy; {{ date('Y') }} Voyages Scolaires</p>

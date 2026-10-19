@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\VoyageRequest;
 use App\Models\Voyage;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * API JSON des voyages scolaires (routes préfixées par /api, noms api.voyages.*).
@@ -55,6 +56,8 @@ class VoyageController extends Controller
      */
     public function destroy(Voyage $voyage): JsonResponse
     {
+        Gate::authorize('delete', $voyage);
+
         $voyage->delete();
 
         return response()->json(null, 204);

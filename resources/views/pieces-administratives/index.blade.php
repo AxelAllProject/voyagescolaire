@@ -7,8 +7,13 @@
         />
     </x-slot:header>
 
+    @php($peutGerer = auth()->user()->can('create', App\Models\PieceAdministrative::class))
+
     <div class="row g-4">
         <div class="col-lg-4 order-lg-2">
+            @unless ($peutGerer)
+                <x-lecture-seule>les pièces administratives</x-lecture-seule>
+            @else
             <section class="section-card p-4 sticky-sidebar">
                 <div class="d-flex align-items-center gap-3 mb-3">
                     <div class="section-icon"><i class="bi bi-plus-lg"></i></div>
@@ -33,6 +38,7 @@
                     <button type="submit" class="btn btn-primary w-100 mt-3">Ajouter</button>
                 </form>
             </section>
+            @endunless
         </div>
 
         <div class="col-lg-8 order-lg-1">
@@ -40,7 +46,9 @@
                 <section class="section-card p-5 text-center">
                     <div class="vs-icon-tile mx-auto mb-3"><i class="bi bi-file-earmark-text fs-4"></i></div>
                     <h2 class="h5 fw-bold">Aucune pièce administrative</h2>
-                    <p class="text-secondary mb-0">Ajoutez votre première pièce avec le formulaire.</p>
+                    <p class="text-secondary mb-0">
+                        {{ $peutGerer ? 'Ajoutez votre première pièce avec le formulaire.' : 'Aucune pièce n\'a encore été enregistrée.' }}
+                    </p>
                 </section>
             @else
                 <div class="d-grid gap-3">
@@ -56,22 +64,26 @@
                                     Demandée pour {{ $piece->voyages_count }} {{ $piece->voyages_count > 1 ? 'voyages' : 'voyage' }}
                                 </span>
                             </div>
-                            <div class="text-nowrap">
-                                <a href="{{ route('pieces-administratives.edit', $piece) }}" class="btn btn-sm btn-outline-secondary" aria-label="Modifier {{ $piece->nom }}">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#supprimer-piece-{{ $piece->id }}" aria-label="Supprimer {{ $piece->nom }}">
-                                    <i class="bi bi-trash3"></i>
-                                </button>
-                            </div>
+                            @if ($peutGerer)
+                                <div class="text-nowrap">
+                                    <a href="{{ route('pieces-administratives.edit', $piece) }}" class="btn btn-sm btn-outline-secondary" aria-label="Modifier {{ $piece->nom }}">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#supprimer-piece-{{ $piece->id }}" aria-label="Supprimer {{ $piece->nom }}">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </div>
+                            @endif
                         </section>
 
-                        <x-confirm-delete
-                            :id="'supprimer-piece-'.$piece->id"
-                            :action="route('pieces-administratives.destroy', $piece)"
-                            title="Supprimer cette pièce ?"
-                            :message="'La pièce « '.$piece->nom.' » ne sera plus demandée pour aucun voyage.'"
-                        />
+                        @if ($peutGerer)
+                            <x-confirm-delete
+                                :id="'supprimer-piece-'.$piece->id"
+                                :action="route('pieces-administratives.destroy', $piece)"
+                                title="Supprimer cette pièce ?"
+                                :message="'La pièce « '.$piece->nom.' » ne sera plus demandée pour aucun voyage.'"
+                            />
+                        @endif
                     @endforeach
                 </div>
             @endif

@@ -53,7 +53,33 @@ php artisan serve
 
 Le site est alors disponible sur **http://127.0.0.1:8000** et l'API sur **http://127.0.0.1:8000/api**.
 
-Le seeder ajoute 8 classes (de la 6e A à la 3e B), 6 pièces administratives courantes et 4 voyages (Rome, Londres, Chamonix et une sortie passée au Futuroscope).
+Le seeder ajoute 8 classes (de la 6e A à la 3e B), 6 pièces administratives courantes, 4 voyages (Rome, Londres, Chamonix et une sortie passée au Futuroscope) et deux comptes de démonstration :
+
+| Email                   | Mot de passe | Rôle           |
+|-------------------------|--------------|----------------|
+| `admin@example.com`     | `password`   | Administrateur |
+| `personnel@example.com` | `password`   | Personnel      |
+
+> ⚠️ Ces comptes servent uniquement au développement. En production, créez les vrais comptes avec `php artisan utilisateur:creer`.
+
+## 🔐 Comptes et droits
+
+Il n'y a pas d'inscription publique : un administrateur crée les comptes du personnel en ligne de commande.
+
+```bash
+php artisan utilisateur:creer                       # questions interactives
+php artisan utilisateur:creer --nom="Mme Martin" --email=martin@college.fr --role=personnel
+```
+
+| Action                                         | Visiteur | Personnel | Administrateur |
+|------------------------------------------------|:--------:|:---------:|:--------------:|
+| Accueil, catalogue et fiches des voyages       | ✅       | ✅        | ✅             |
+| Créer et modifier un voyage                    | ❌       | ✅        | ✅             |
+| Supprimer un voyage                            | ❌       | ❌        | ✅             |
+| Consulter les classes et les pièces            | ❌       | ✅        | ✅             |
+| Ajouter, modifier, supprimer classes et pièces | ❌       | ❌        | ✅             |
+
+La connexion se fait sur `/login` (lien « Espace personnel »). Elle est gérée par [Laravel Fortify](https://laravel.com/docs/fortify) et limitée à 5 tentatives par minute. Chacun peut changer son mot de passe dans **Mon compte**. Les droits sont définis dans `app/Policies/`.
 
 ## 🖥️ Le site
 
@@ -118,14 +144,26 @@ Supprimer un voyage, une classe ou une pièce supprime aussi ses liaisons dans l
 
 Toutes les routes sont préfixées par `/api` (noms `api.voyages.*`). Envoyez l'en-tête `Accept: application/json`. Les dates sont au format `AAAA-MM-JJ`.
 
-| Méthode  | URL                 | Action                                  | Succès |
-|----------|---------------------|-----------------------------------------|:------:|
-| `GET`    | `/api/voyages`      | Lister les voyages (par date de départ) | `200`  |
-| `POST`   | `/api/voyages`      | Créer un voyage                         | `201`  |
-| `GET`    | `/api/voyages/{id}` | Afficher un voyage avec ses classes et pièces | `200`  |
-| `PUT`    | `/api/voyages/{id}` | Remplacer un voyage (tous les champs)   | `200`  |
-| `PATCH`  | `/api/voyages/{id}` | Modifier uniquement les champs envoyés  | `200`  |
-| `DELETE` | `/api/voyages/{id}` | Supprimer un voyage                     | `204`  |
+La lecture est publique. **L'écriture demande un jeton** ([Laravel Sanctum](https://laravel.com/docs/sanctum)), envoyé dans l'en-tête `Authorization: Bearer <jeton>`. Le jeton a les mêmes droits que le compte qui l'a créé.
+
+```bash
+# Obtenir un jeton (limité à 5 essais par minute)
+curl -X POST http://127.0.0.1:8000/api/jetons \
+  -H "Accept: application/json" -H "Content-Type: application/json" \
+  -d '{"email": "admin@example.com", "password": "password", "appareil": "Script d'\''import"}'
+# → 201 { "jeton": "1|AbC…", "utilisateur": { … } }
+```
+
+| Méthode  | URL                   | Action                                        | Jeton | Succès |
+|----------|-----------------------|-----------------------------------------------|:-----:|:------:|
+| `POST`   | `/api/jetons`         | Obtenir un jeton (email, mot de passe, appareil) | –  | `201`  |
+| `DELETE` | `/api/jetons/actuel`  | Révoquer le jeton utilisé                     | ✅    | `204`  |
+| `GET`    | `/api/voyages`        | Lister les voyages (par date de départ)       | –     | `200`  |
+| `GET`    | `/api/voyages/{id}`   | Afficher un voyage avec ses classes et pièces | –     | `200`  |
+| `POST`   | `/api/voyages`        | Créer un voyage                               | ✅    | `201`  |
+| `PUT`    | `/api/voyages/{id}`   | Remplacer un voyage (tous les champs)         | ✅    | `200`  |
+| `PATCH`  | `/api/voyages/{id}`   | Modifier uniquement les champs envoyés        | ✅    | `200`  |
+| `DELETE` | `/api/voyages/{id}`   | Supprimer un voyage (administrateur)          | ✅    | `204`  |
 
 <details>
 <summary><strong>Champs et règles de validation</strong></summary>
@@ -155,6 +193,7 @@ La même validation (`App\Http\Requests\VoyageRequest`) sert au site et à l'API
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/voyages \
+  -H "Authorization: Bearer 1|AbC…" \
   -H "Accept: application/json" \
   -H "Content-Type: application/json" \
   -d '{
@@ -178,6 +217,8 @@ La réponse `201 Created` contient le voyage avec ses tableaux `classes` et `pie
 
 | Code  | Cas                            | Réponse                                         |
 |:-----:|--------------------------------|-------------------------------------------------|
+| `401` | Jeton absent ou invalide       | `{"message": "Non authentifié. Envoyez un jeton valide…"}` |
+| `403` | Droits insuffisants            | `{"message": "Cette action n'est pas autorisée."}` |
 | `404` | Voyage ou route inexistant     | `{"message": "Ressource introuvable."}`          |
 | `405` | Méthode HTTP non autorisée     | `{"message": "Méthode non autorisée"}`           |
 | `422` | Données invalides              | `message` + détail par champ dans `errors`       |
@@ -207,13 +248,29 @@ php artisan test
 | `tests/Feature/ClasseTest.php`           | Ajout, unicité, renommage, suppression des classes                     |
 | `tests/Feature/PieceAdministrativeTest.php` | Ajout, validation, modification, suppression des pièces             |
 | `tests/Feature/VoyageApiTest.php`        | Toutes les routes de l'API, erreurs 404/405/422 en français            |
+| `tests/Feature/AutorisationTest.php`     | Connexion, déconnexion, mot de passe, droits visiteur / personnel / admin |
+| `tests/Feature/ApiAuthentificationTest.php` | Jetons Sanctum : obtention, révocation, accès refusés (401/403)     |
+
+### Intégration continue
+
+À chaque pull request et à chaque push sur `main`, GitHub Actions (`.github/workflows/tests.yml`) lance :
+
+- **Tests PHP** : style du code (`pint --test`) et `php artisan test` ;
+- **Build des assets** : `npm ci` puis `npm run build` ;
+- **Audit de sécurité** : `composer audit` sur les dépendances.
+
+`main` est protégée : on passe par une pull request, et les tests et le build doivent réussir avant le merge.
 
 ## 📁 Structure du projet
 
 ```
 app/
+├── Console/Commands/CreerUtilisateur.php     # php artisan utilisateur:creer
+├── Enums/Role.php                            # admin, personnel
+├── Policies/                                 # Droits sur les voyages, classes et pièces
 ├── Http/
 │   ├── Controllers/
+│   │   ├── Api/JetonController.php           # Jetons Sanctum
 │   │   ├── Api/VoyageController.php          # API JSON
 │   │   ├── VoyageController.php              # Pages des voyages
 │   │   ├── ClasseController.php
