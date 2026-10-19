@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Classe;
+use App\Models\PieceAdministrative;
 use App\Models\Voyage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -79,10 +81,10 @@ class VoyageApiTest extends TestCase
         $this->postJson('/api/voyages', [])
             ->assertUnprocessable()
             ->assertJsonValidationErrors([
-                'titre' => 'Le champ titre est obligatoire.',
-                'date_debut' => 'Le champ date de début est obligatoire.',
-                'participation_familiale' => 'Le champ participation familiale est obligatoire.',
-                'nb_places' => 'Le champ nombre de places est obligatoire.',
+                'titre' => 'Le titre du voyage est obligatoire.',
+                'date_debut' => 'La date de départ est obligatoire.',
+                'participation_familiale' => 'La participation familiale est obligatoire.',
+                'nb_places' => 'Le nombre de places disponibles est obligatoire.',
             ]);
     }
 
@@ -90,7 +92,35 @@ class VoyageApiTest extends TestCase
     {
         $this->postJson('/api/voyages', $this->payload(['date_fin' => '2027-02-01']))
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['date_fin' => 'Le champ date de fin doit être une date postérieure ou égale au date de début.']);
+            ->assertJsonValidationErrors(['date_fin' => 'La date de retour doit être postérieure ou égale à la date de départ.']);
+    }
+
+    public function test_it_rejects_a_family_participation_above_the_price(): void
+    {
+        $this->postJson('/api/voyages', $this->payload(['prix' => 300, 'participation_familiale' => 400]))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['participation_familiale' => 'La participation familiale ne peut pas être supérieure au coût total du voyage.']);
+    }
+
+    public function test_patch_compares_the_participation_with_the_stored_price(): void
+    {
+        $voyage = Voyage::factory()->create(['prix' => 300, 'participation_familiale' => 100]);
+
+        $this->patchJson("/api/voyages/{$voyage->id}", ['participation_familiale' => 250])->assertOk();
+        $this->patchJson("/api/voyages/{$voyage->id}", ['participation_familiale' => 350])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('participation_familiale');
+    }
+
+    public function test_it_creates_a_voyage_with_its_classes_and_pieces(): void
+    {
+        $classe = Classe::create(['nom' => '3e A']);
+        $piece = PieceAdministrative::create(['nom' => 'Autorisation parentale']);
+
+        $this->postJson('/api/voyages', $this->payload(['classes' => [$classe->id], 'pieces_administratives' => [$piece->id]]))
+            ->assertCreated()
+            ->assertJsonPath('classes.0.nom', '3e A')
+            ->assertJsonPath('pieces_administratives.0.nom', 'Autorisation parentale');
     }
 
     public function test_put_requires_every_field(): void

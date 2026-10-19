@@ -18,7 +18,6 @@ class VoyageCreateTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Créer un nouveau voyage scolaire');
-        $response->assertSee('bootstrap@5.3.3', false);
     }
 
     public function test_can_create_voyage_with_flash_message(): void
@@ -46,7 +45,7 @@ class VoyageCreateTest extends TestCase
 
         $response = $this->post(route('voyages.store'), $payload);
 
-        $response->assertRedirect(route('voyages.create'));
+        $response->assertRedirect(route('voyages.show', Voyage::first()));
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('voyages', [

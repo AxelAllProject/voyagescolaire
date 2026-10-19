@@ -27,20 +27,40 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navigation">
                     <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                        <li class="nav-item"><a class="nav-link" href="#fonctionnalites">Fonctionnalités</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#voyages">Prochains voyages</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#etapes">Comment ça marche</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#api">API</a></li>
+                        <li class="nav-item">
+                            <a @class(['nav-link', 'active' => request()->routeIs('accueil')]) href="{{ route('accueil') }}">Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a @class(['nav-link', 'active' => request()->routeIs('voyages.*') && ! request()->routeIs('voyages.create')]) href="{{ route('voyages.index') }}">Voyages</a>
+                        </li>
+                        <li class="nav-item">
+                            <a @class(['nav-link', 'active' => request()->routeIs('classes.*')]) href="{{ route('classes.index') }}">Classes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a @class(['nav-link', 'active' => request()->routeIs('pieces-administratives.*')]) href="{{ route('pieces-administratives.index') }}">Pièces administratives</a>
+                        </li>
                         <li class="nav-item ms-lg-2">
-                            <a class="btn btn-primary btn-sm" href="{{ route('voyages.index') }}">Voir l'API</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('voyages.create') }}">
+                                <i class="bi bi-plus-lg me-1"></i> Nouveau voyage
+                            </a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
 
-        <main>
-            {{ $slot }}
+        <main @class(['vs-page' => isset($header)])>
+            @isset($header)
+                {{ $header }}
+
+                <div class="container vs-page-body pb-5">
+                    <x-flash />
+
+                    {{ $slot }}
+                </div>
+            @else
+                {{ $slot }}
+            @endisset
         </main>
 
         <footer class="vs-footer py-5">
@@ -49,8 +69,16 @@
                     <x-logo :size="32" />
                     <span class="fw-semibold text-dark">Voyages Scolaires</span>
                 </div>
-                <p class="mb-0 small text-secondary">&copy; {{ date('Y') }} Voyages Scolaires · Construit avec Laravel et Bootstrap</p>
+                <ul class="nav small">
+                    <li class="nav-item"><a class="nav-link link-secondary px-2" href="{{ route('voyages.index') }}">Voyages</a></li>
+                    <li class="nav-item"><a class="nav-link link-secondary px-2" href="{{ route('classes.index') }}">Classes</a></li>
+                    <li class="nav-item"><a class="nav-link link-secondary px-2" href="{{ route('pieces-administratives.index') }}">Pièces administratives</a></li>
+                    <li class="nav-item"><a class="nav-link link-secondary px-2" href="{{ route('accueil') }}#api">API</a></li>
+                </ul>
+                <p class="mb-0 small text-secondary">&copy; {{ date('Y') }} Voyages Scolaires</p>
             </div>
         </footer>
+
+        @stack('scripts')
     </body>
 </html>

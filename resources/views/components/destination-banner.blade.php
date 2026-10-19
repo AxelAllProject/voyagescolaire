@@ -27,7 +27,7 @@
     </g>
     <path d="M0 150 C 60 110, 120 120, 180 140 S 300 110, 400 132 L 400 180 L 0 180 Z" fill="#ffffff" fill-opacity="0.16"/>
     <path d="M0 166 C 80 140, 160 150, 240 162 S 340 150, 400 158 L 400 180 L 0 180 Z" fill="#ffffff" fill-opacity="0.22"/>
-    <path d="M24 120 C 110 120, 160 70, 250 64" fill="none" stroke="#ffffff" stroke-opacity="0.7" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 10"/>
+    <path d="M24 58 C 90 36, 170 34, 250 56" fill="none" stroke="#ffffff" stroke-opacity="0.7" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 10"/>
     <x-paper-plane transform="translate(236 34) scale(0.32)"/>
     <text x="24" y="98" font-family="'Instrument Sans', 'Segoe UI', Arial, sans-serif" font-size="26" font-weight="700" fill="#ffffff">{{ $destination }}</text>
 </svg>

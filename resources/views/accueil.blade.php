@@ -15,14 +15,22 @@
                         Destinations, dates, budget, places disponibles, classes concernées et pièces administratives :
                         tout est centralisé au même endroit.
                     </p>
-                    <div class="d-flex flex-wrap gap-3 mb-4">
-                        <a href="#voyages" class="btn btn-light btn-lg">Découvrir les voyages</a>
-                        <a href="#api" class="btn btn-outline-light btn-lg">Utiliser l'API</a>
+                    <div class="d-flex flex-wrap gap-3 mb-5">
+                        <a href="{{ route('voyages.index') }}" class="btn btn-light btn-lg">Voir les voyages</a>
+                        <a href="{{ route('voyages.create') }}" class="btn btn-outline-light btn-lg"><i class="bi bi-plus-lg me-1"></i> Créer un voyage</a>
                     </div>
-                    <div class="d-flex flex-wrap gap-2">
-                        <span class="vs-pill">Laravel 13</span>
-                        <span class="vs-pill">API REST</span>
-                        <span class="vs-pill">100 % en français</span>
+                    <div class="row g-4 text-center text-sm-start">
+                        @foreach ([
+                            [$stats['voyages'], $stats['voyages'] > 1 ? 'voyages à venir' : 'voyage à venir'],
+                            [$stats['places'], 'places proposées'],
+                            [$stats['classes'], $stats['classes'] > 1 ? 'classes' : 'classe'],
+                            [$stats['pieces'], $stats['pieces'] > 1 ? 'pièces suivies' : 'pièce suivie'],
+                        ] as [$valeur, $libelle])
+                            <div class="col-6 col-sm-3">
+                                <div class="vs-hero-stat">{{ $valeur }}</div>
+                                <div class="vs-hero-stat-label">{{ $libelle }}</div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -47,18 +55,21 @@
 
             <div class="row g-4">
                 @foreach ([
-                    ['icon' => 'voyage', 'titre' => 'Voyages', 'texte' => 'Destination, dates, prix, participation des familles, transport et nombre de places pour chaque voyage.'],
-                    ['icon' => 'classe', 'titre' => 'Classes', 'texte' => 'Associez une ou plusieurs classes à un voyage et retrouvez en un clin d\'œil qui part où.'],
-                    ['icon' => 'document', 'titre' => 'Pièces administratives', 'texte' => 'Listez les documents à fournir : autorisation de sortie, carte d\'identité, fiche sanitaire…'],
+                    ['icon' => 'voyage', 'titre' => 'Voyages', 'texte' => 'Destination, dates, prix, participation des familles, transport et nombre de places pour chaque voyage.', 'route' => 'voyages.index', 'lien' => 'Voir les voyages'],
+                    ['icon' => 'classe', 'titre' => 'Classes', 'texte' => 'Associez une ou plusieurs classes à un voyage et retrouvez en un clin d\'œil qui part où.', 'route' => 'classes.index', 'lien' => 'Gérer les classes'],
+                    ['icon' => 'document', 'titre' => 'Pièces administratives', 'texte' => 'Listez les documents à fournir : autorisation de sortie, carte d\'identité, fiche sanitaire…', 'route' => 'pieces-administratives.index', 'lien' => 'Gérer les pièces'],
                 ] as $fonctionnalite)
                     <div class="col-md-4">
-                        <div class="card vs-card h-100 p-4">
+                        <a href="{{ route($fonctionnalite['route']) }}" class="card vs-card vs-card-link h-100 p-4">
                             <div class="vs-icon-tile mb-4">
                                 <x-icon :name="$fonctionnalite['icon']" />
                             </div>
                             <h3 class="h5 fw-bold">{{ $fonctionnalite['titre'] }}</h3>
-                            <p class="text-secondary mb-0">{{ $fonctionnalite['texte'] }}</p>
-                        </div>
+                            <p class="text-secondary mb-4">{{ $fonctionnalite['texte'] }}</p>
+                            <span class="mt-auto fw-semibold text-primary d-inline-flex align-items-center gap-1">
+                                {{ $fonctionnalite['lien'] }} <x-icon name="arrow-right" :size="18" />
+                            </span>
+                        </a>
                     </div>
                 @endforeach
             </div>
@@ -74,37 +85,14 @@
                     <h2 class="fw-bold mb-0">Prochains voyages</h2>
                 </div>
                 <a href="{{ route('voyages.index') }}" class="link-primary fw-semibold text-decoration-none d-inline-flex align-items-center gap-1">
-                    Tous les voyages (JSON) <x-icon name="arrow-right" :size="18" />
+                    Tous les voyages <x-icon name="arrow-right" :size="18" />
                 </a>
             </div>
 
             <div class="row g-4">
                 @forelse ($voyages as $voyage)
                     <div class="col-md-6 col-lg-4">
-                        <article class="card vs-card h-100">
-                            <x-destination-banner :destination="$voyage->destination" :variant="$loop->index" class="card-img-top d-block w-100" style="height: 180px" />
-                            <div class="card-body p-4 d-flex flex-column">
-                                <h3 class="h5 fw-bold mb-2">{{ $voyage->titre }}</h3>
-                                <p class="text-secondary small mb-3">{{ \Illuminate\Support\Str::limit($voyage->description, 110) }}</p>
-                                <ul class="list-unstyled small text-secondary mb-4">
-                                    <li class="d-flex align-items-center gap-2 mb-1">
-                                        <x-icon name="calendar" :size="16" class="text-primary" />
-                                        Du {{ $voyage->date_debut->translatedFormat('j F') }} au {{ $voyage->date_fin->translatedFormat('j F Y') }}
-                                    </li>
-                                    <li class="d-flex align-items-center gap-2">
-                                        <x-icon name="users" :size="16" class="text-primary" />
-                                        {{ $voyage->nb_places }} places · en {{ $voyage->transport }}
-                                    </li>
-                                </ul>
-                                <div class="mt-auto d-flex align-items-end justify-content-between">
-                                    <div>
-                                        <div class="small text-secondary">Participation familles</div>
-                                        <div class="fs-4 fw-bold text-dark">{{ number_format($voyage->participation_familiale, 0, ',', ' ') }} €</div>
-                                    </div>
-                                    <span class="badge rounded-pill text-bg-light border">Coût total {{ number_format($voyage->prix, 0, ',', ' ') }} €</span>
-                                </div>
-                            </div>
-                        </article>
+                        <x-voyage-card :voyage="$voyage" :variant="$loop->index" />
                     </div>
                 @empty
                     <div class="col-12">
@@ -113,7 +101,10 @@
                                 <x-icon name="voyage" />
                             </div>
                             <h3 class="h5 fw-bold">Aucun voyage prévu pour le moment</h3>
-                            <p class="text-secondary mb-0">Créez votre premier voyage avec une requête <code>POST /api/voyages</code>.</p>
+                            <p class="text-secondary mb-4">Commencez par créer le premier voyage de l'établissement.</p>
+                            <div>
+                                <a href="{{ route('voyages.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Créer un voyage</a>
+                            </div>
                         </div>
                     </div>
                 @endforelse
@@ -131,14 +122,15 @@
 
             <div class="row g-4 text-center vs-steps">
                 @foreach ([
-                    ['titre' => 'Créez le voyage', 'texte' => 'Renseignez la destination, les dates, le budget et le nombre de places.'],
-                    ['titre' => 'Ajoutez les classes', 'texte' => 'Choisissez les classes qui participent au voyage.'],
-                    ['titre' => 'Listez les documents', 'texte' => 'Indiquez les pièces administratives que les familles doivent fournir.'],
+                    ['titre' => 'Préparez vos classes', 'texte' => 'Enregistrez les classes de l\'établissement qui pourront partir en voyage.', 'route' => 'classes.index', 'lien' => 'Gérer les classes'],
+                    ['titre' => 'Listez les documents', 'texte' => 'Définissez les pièces administratives que les familles peuvent avoir à fournir.', 'route' => 'pieces-administratives.index', 'lien' => 'Gérer les pièces'],
+                    ['titre' => 'Créez le voyage', 'texte' => 'Destination, dates, budget et places, puis cochez les classes et les pièces demandées.', 'route' => 'voyages.create', 'lien' => 'Créer un voyage'],
                 ] as $etape)
                     <div class="col-md-4 position-relative">
                         <span class="vs-step-number mb-3">{{ $loop->iteration }}</span>
                         <h3 class="h5 fw-bold">{{ $etape['titre'] }}</h3>
-                        <p class="text-secondary mb-0 px-lg-4">{{ $etape['texte'] }}</p>
+                        <p class="text-secondary mb-2 px-lg-4">{{ $etape['texte'] }}</p>
+                        <a href="{{ route($etape['route']) }}" class="fw-semibold text-decoration-none">{{ $etape['lien'] }} <i class="bi bi-arrow-right"></i></a>
                     </div>
                 @endforeach
             </div>

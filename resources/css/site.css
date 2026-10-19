@@ -1,4 +1,5 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.min.css';
 
 :root {
     --vs-navy: #1e3a8a;
@@ -220,4 +221,286 @@ h1, h2, h3, h4, h5, .navbar-brand {
 .vs-footer {
     background: #f8fafc;
     border-top: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+/* Mise en page générale */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.vs-page {
+    background: #f8fafc;
+}
+
+.vs-navbar .nav-link.active {
+    color: var(--vs-blue);
+    font-weight: 600;
+}
+
+/* En-tête des pages intérieures */
+.vs-page-header {
+    background: var(--vs-gradient);
+    color: #fff;
+    padding: 2.5rem 0 5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.vs-page-header h1 {
+    color: #fff;
+    font-weight: 700;
+}
+
+.vs-page-header .breadcrumb {
+    --bs-breadcrumb-divider-color: rgba(255, 255, 255, 0.5);
+}
+
+.vs-page-header .breadcrumb a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+}
+
+.vs-page-header .breadcrumb a:hover {
+    color: #fff;
+}
+
+.vs-page-header .breadcrumb-item.active {
+    color: #fff;
+}
+
+.vs-page-body {
+    margin-top: -3rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* Cartes de section (formulaires, fiches) */
+.section-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.section-card:focus-within {
+    border-color: #bfdbfe;
+    box-shadow: 0 8px 28px -4px rgba(37, 99, 235, 0.08);
+}
+
+.section-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background-color: #eff6ff;
+    color: var(--vs-blue);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.section-step {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+}
+
+/* Champs de formulaire */
+.form-label {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #334155;
+    margin-bottom: 0.45rem;
+}
+
+.required-star {
+    color: #ef4444;
+    margin-left: 2px;
+}
+
+.form-control,
+.form-select {
+    border-color: #cbd5e1;
+    border-radius: 0.625rem;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.9375rem;
+    color: #0f172a;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--vs-blue);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.input-group-text {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+    color: #64748b;
+    border-radius: 0.625rem;
+    font-weight: 500;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    background-color: #fffafa;
+}
+
+.invalid-feedback {
+    font-size: 0.8125rem;
+    font-weight: 500;
+}
+
+/* Cases à cocher en tuiles */
+.choice-tile {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    background: #fff;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.choice-tile:hover {
+    border-color: #93c5fd;
+    background-color: #f8fafc;
+}
+
+.choice-tile:has(input:checked) {
+    border-color: var(--vs-blue);
+    background-color: #eff6ff;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+}
+
+.choice-tile:has(input:checked) .choice-title {
+    color: var(--vs-blue);
+    font-weight: 700;
+}
+
+/* Aperçu en direct du formulaire */
+.sticky-sidebar {
+    position: sticky;
+    top: 5.5rem;
+}
+
+.preview-cover {
+    height: 175px;
+    background: var(--vs-gradient);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem;
+}
+
+.preview-cover img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-cover-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.75) 0%, rgba(15, 23, 42, 0.05) 100%);
+}
+
+/* Fiche voyage */
+.vs-cover {
+    height: 260px;
+    position: relative;
+    overflow: hidden;
+    border-top-left-radius: calc(1rem - 1px);
+    border-top-right-radius: calc(1rem - 1px);
+}
+
+.vs-cover img,
+.vs-cover svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.vs-stat {
+    padding: 1rem;
+    border-radius: 0.875rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    height: 100%;
+}
+
+.vs-stat-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+}
+
+.vs-stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--vs-ink);
+}
+
+.vs-card-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.vs-card-link:hover h3 {
+    color: var(--vs-blue);
+}
+
+.vs-card-cover {
+    height: 180px;
+    overflow: hidden;
+}
+
+.vs-card-cover img,
+.vs-card-cover svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Chiffres clés de l'accueil */
+.vs-hero-stat {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+}
+
+.vs-hero-stat-label {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+/* Filtres du catalogue */
+.vs-filter .btn {
+    --bs-btn-padding-y: 0.45rem;
+    --bs-btn-padding-x: 1rem;
+    --bs-btn-font-size: 0.875rem;
+}
+
+.pagination {
+    --bs-pagination-border-radius: 0.6rem;
+    --bs-pagination-active-bg: var(--vs-blue);
+    --bs-pagination-active-border-color: var(--vs-blue);
 }

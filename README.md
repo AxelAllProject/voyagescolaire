@@ -1,88 +1,244 @@
-# EduVoyage — Application de Gestion des Voyages Scolaires
+<p align="center">
+  <img src="docs/images/banner.svg" alt="Voyages Scolaires — gestion des voyages scolaires" width="100%">
+</p>
 
-Application web et API développée avec **Laravel 13** et **Bootstrap 5.3** permettant de concevoir, planifier et administrer les voyages scolaires d'un établissement (destinations, dates, budget, classes concernées et pièces administratives requises).
+<p align="center">
+  <img src="https://img.shields.io/badge/Laravel-13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 13">
+  <img src="https://img.shields.io/badge/PHP-8.3%2B-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.3+">
+  <img src="https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white" alt="Bootstrap 5.3">
+  <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
+  <img src="https://img.shields.io/badge/langue-fran%C3%A7ais-0055A4?style=for-the-badge" alt="Langue : français">
+</p>
 
----
-
-## Fonctionnalités principales
-
-### 1. Formulaire de création d'un voyage scolaire (`/voyages/create`)
-- **Interface UI/UX moderne (Bootstrap 5.3 & Bootstrap Icons)** :
-  - Découpage ergonomique en **4 étapes** :
-    1. *Informations générales & Destination* (`titre`, `destination`, `image`, `description`)
-    2. *Dates du séjour & Logistique* (`date_debut`, `date_fin`, `transport`, `nb_places`)
-    3. *Budget & Participation familiale* (`prix`, `participation_familiale`)
-    4. *Classes concernées & Dossier administratif* (`classes[]`, `pieces_administratives[]`)
-  - **Aperçu temps réel (Live Preview)** en colonne latérale sticky : mise à jour instantanée de la carte du voyage, calcul automatique de la durée en jours/nuits, de la part subventionnée par l'établissement et du budget global estimé.
-- **Système de gestion des erreurs de validation** :
-  - Messages d'erreur personnalisés en français dans `VoyageController::store()`.
-  - Bannière récapitulative globale en haut de page lorsque `$errors->any()` est vrai.
-  - Mise en évidence individuelle des champs invalides via la classe Bootstrap `.is-invalid` et affichage du message sous chaque champ avec `@error('...') <div class="invalid-feedback">`.
-- **Conservation des saisies (`old()`)** :
-  - Toutes les valeurs saisies par l'utilisateur (`input`, `textarea`, `select`, `checkbox`) sont intégralement conservées via l'helper `old()` en cas d'erreur de validation.
-- **Messages Flash (`session('success')` / `session('error')`)** :
-  - Affichage d'une alerte Bootstrap dismissible confirmant l'enregistrement du voyage après redirection.
+<p align="center">
+  <a href="#-installation">Installation</a> ·
+  <a href="#-le-site">Le site</a> ·
+  <a href="#-modèle-de-données">Modèle de données</a> ·
+  <a href="#-api">API</a> ·
+  <a href="#-tests">Tests</a>
+</p>
 
 ---
 
-## Architecture & Routes
+## ✨ Présentation
 
-### Routes Web (`routes/web.php`)
-Les routes Web bénéficient du middleware `web` (gestion de session, protection CSRF, partage automatique de `$errors` et conservation de `old()`).
+**Voyages Scolaires** est une application Laravel 13 pour organiser les sorties et voyages d'un établissement :
 
-| Méthode | URI | Nom de la route | Action du contrôleur | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| `GET` | `/voyages/create` | `voyages.create` | `VoyageController@create` | Affiche le formulaire Bootstrap de création d'un voyage |
-| `POST` | `/voyages` | `voyages.store` | `VoyageController@store` | Valide les données, crée le voyage et redirige avec un message flash |
-| `GET` | `/voyages` | `voyages.index` | `VoyageController@index` | Liste les voyages enregistrés |
-| `GET` | `/voyages/{voyage}` | `voyages.show` | `VoyageController@show` | Affiche les détails d'un voyage |
-| `PUT/PATCH` | `/voyages/{voyage}` | `voyages.update` | `VoyageController@update` | Met à jour un voyage existant |
-| `DELETE` | `/voyages/{voyage}` | `voyages.destroy` | `VoyageController@destroy` | Supprime un voyage |
+- 🧭 **Voyages** : destination, dates, budget, participation des familles, nombre de places, transport ;
+- 🏫 **Classes** qui partent en voyage ;
+- 📄 **Pièces administratives** à fournir par les familles (autorisation parentale, fiche sanitaire…).
 
-### Routes API (`routes/api.php`)
-Les routes API sont préfixées par `/api` et leurs noms par `api.voyages.*`.
+Elle propose un **site web** (Blade + Bootstrap 5) et une **API REST** JSON. Tous les textes et messages d'erreur sont en **français**.
 
----
+## 🚀 Installation
 
-## Règles de validation (`VoyageController::store`)
-
-| Champ | Règles Laravel | Description |
-| :--- | :--- | :--- |
-| `titre` | `required \| string \| max:255` | Intitulé du voyage scolaire |
-| `destination` | `required \| string \| max:255` | Ville et pays de destination |
-| `image` | `nullable \| string \| max:255` | URL ou chemin de l'image d'illustration |
-| `description` | `required \| string` | Programme détaillé et objectifs pédagogiques |
-| `date_debut` | `required \| date` | Date de départ |
-| `date_fin` | `required \| date \| after_or_equal:date_debut` | Date de retour (postérieure ou égale au départ) |
-| `transport` | `required \| string \| max:255` | Moyen de transport principal |
-| `nb_places` | `required \| integer \| min:1` | Capacité maximale d'élèves |
-| `prix` | `required \| numeric \| min:0` | Coût réel par élève (€) |
-| `participation_familiale` | `required \| numeric \| min:0 \| lte:prix` | Participation demandée aux familles (≤ coût réel) |
-| `classes` | `nullable \| array` (`exists:classes,id`) | Identifiants des classes concernées |
-| `pieces_administratives` | `nullable \| array` (`exists:pieces_administratives,id`) | Identifiants des pièces administratives requises |
-
----
-
-## Installation & Démarrage rapide
+> **Prérequis :** PHP 8.3+, Composer et Node.js.
 
 ```bash
-# 1. Installer les dépendances PHP
-composer install
+git clone https://github.com/AxelAllProject/voyagescolaire.git
+cd voyagescolaire
 
-# 2. Configurer l'environnement et la base SQLite
+composer install
 cp .env.example .env
 php artisan key:generate
-touch database/database.sqlite
-php artisan migrate
 
-# 3. Lancer le serveur de développement
+touch database/database.sqlite
+php artisan migrate --seed   # crée les tables et des données de démonstration
+
+npm install
+npm run build
+
 php artisan serve
 ```
 
-Accédez ensuite au formulaire sur : **[http://127.0.0.1:8000/voyages/create](http://127.0.0.1:8000/voyages/create)**
+Le site est alors disponible sur **http://127.0.0.1:8000** et l'API sur **http://127.0.0.1:8000/api**.
 
-## Tests automatisés
+Le seeder ajoute 8 classes (de la 6e A à la 3e B), 6 pièces administratives courantes et 4 voyages (Rome, Londres, Chamonix et une sortie passée au Futuroscope).
+
+## 🖥️ Le site
+
+| Page                    | URL                                   | Contenu                                                                 |
+|-------------------------|---------------------------------------|-------------------------------------------------------------------------|
+| Accueil                 | `/`                                   | Chiffres clés, prochains voyages, étapes pour préparer un voyage, aperçu de l'API |
+| Catalogue des voyages   | `/voyages`                            | Voyages à venir, passés ou tous, recherche par titre ou destination, pagination |
+| Fiche d'un voyage       | `/voyages/{id}`                       | Programme, dates, durée, budget (part famille / part établissement), classes et pièces demandées |
+| Nouveau voyage          | `/voyages/create`                     | Formulaire en 4 étapes avec aperçu en direct, calcul de la durée et du budget |
+| Modifier un voyage      | `/voyages/{id}/edit`                  | Même formulaire, prérempli                                              |
+| Classes                 | `/classes`                            | Liste, ajout, renommage et suppression des classes                      |
+| Pièces administratives  | `/pieces-administratives`             | Liste, ajout, modification et suppression des pièces                    |
+
+Les suppressions demandent une confirmation. En cas d'erreur de validation, le formulaire affiche les messages en français et conserve la saisie.
+
+**Ordre logique :** on enregistre d'abord les classes et les pièces administratives, puis on crée le voyage en cochant celles qui le concernent.
+
+## 🗂️ Modèle de données
+
+```mermaid
+erDiagram
+    VOYAGES ||--o{ CLASSE_VOYAGE : "concerne"
+    CLASSES ||--o{ CLASSE_VOYAGE : "participe"
+    VOYAGES ||--o{ PIECE_ADMINISTRATIVE_VOYAGE : "exige"
+    PIECES_ADMINISTRATIVES ||--o{ PIECE_ADMINISTRATIVE_VOYAGE : "requise pour"
+
+    VOYAGES {
+        bigint id PK
+        string titre
+        text description
+        string image "nullable"
+        string destination
+        date date_debut
+        date date_fin
+        decimal prix
+        decimal participation_familiale
+        int nb_places
+        string transport
+    }
+    CLASSES {
+        bigint id PK
+        string nom "unique"
+    }
+    PIECES_ADMINISTRATIVES {
+        bigint id PK
+        string nom "unique"
+        text description "nullable"
+    }
+    CLASSE_VOYAGE {
+        bigint classe_id FK
+        bigint voyage_id FK
+    }
+    PIECE_ADMINISTRATIVE_VOYAGE {
+        bigint piece_administrative_id FK
+        bigint voyage_id FK
+    }
+```
+
+Supprimer un voyage, une classe ou une pièce supprime aussi ses liaisons dans les tables pivot.
+
+## 📡 API
+
+Toutes les routes sont préfixées par `/api` (noms `api.voyages.*`). Envoyez l'en-tête `Accept: application/json`. Les dates sont au format `AAAA-MM-JJ`.
+
+| Méthode  | URL                 | Action                                  | Succès |
+|----------|---------------------|-----------------------------------------|:------:|
+| `GET`    | `/api/voyages`      | Lister les voyages (par date de départ) | `200`  |
+| `POST`   | `/api/voyages`      | Créer un voyage                         | `201`  |
+| `GET`    | `/api/voyages/{id}` | Afficher un voyage avec ses classes et pièces | `200`  |
+| `PUT`    | `/api/voyages/{id}` | Remplacer un voyage (tous les champs)   | `200`  |
+| `PATCH`  | `/api/voyages/{id}` | Modifier uniquement les champs envoyés  | `200`  |
+| `DELETE` | `/api/voyages/{id}` | Supprimer un voyage                     | `204`  |
+
+<details>
+<summary><strong>Champs et règles de validation</strong></summary>
+
+| Champ                      | Type              | Règles                                              |
+|----------------------------|-------------------|-----------------------------------------------------|
+| `titre`                    | texte             | obligatoire, 255 caractères max                     |
+| `description`              | texte             | obligatoire                                         |
+| `image`                    | texte (URL)       | facultatif, 255 caractères max                      |
+| `destination`              | texte             | obligatoire, 255 caractères max                     |
+| `date_debut`               | date              | obligatoire                                         |
+| `date_fin`                 | date              | obligatoire, postérieure ou égale à `date_debut`    |
+| `prix`                     | nombre            | obligatoire, ≥ 0                                    |
+| `participation_familiale`  | nombre            | obligatoire, ≥ 0 et ≤ `prix`                        |
+| `nb_places`                | entier            | obligatoire, ≥ 1                                    |
+| `transport`                | texte             | obligatoire, 255 caractères max                     |
+| `classes`                  | tableau d'id      | facultatif, classes existantes                      |
+| `pieces_administratives`   | tableau d'id      | facultatif, pièces existantes                       |
+
+Avec `PATCH`, seuls les champs envoyés sont validés et modifiés ; une participation envoyée seule est comparée au prix déjà enregistré. Envoyer `classes` ou `pieces_administratives` remplace toute la liste correspondante.
+
+La même validation (`App\Http\Requests\VoyageRequest`) sert au site et à l'API.
+
+</details>
+
+### Exemple : créer un voyage
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/voyages \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "titre": "Découverte de Rome",
+    "description": "Visite du Colisée et du Vatican.",
+    "destination": "Rome, Italie",
+    "date_debut": "2027-03-01",
+    "date_fin": "2027-03-05",
+    "prix": 520,
+    "participation_familiale": 320,
+    "nb_places": 48,
+    "transport": "Autocar Grand Tourisme",
+    "classes": [7, 8],
+    "pieces_administratives": [1, 2]
+  }'
+```
+
+La réponse `201 Created` contient le voyage avec ses tableaux `classes` et `pieces_administratives`.
+
+### Erreurs
+
+| Code  | Cas                            | Réponse                                         |
+|:-----:|--------------------------------|-------------------------------------------------|
+| `404` | Voyage ou route inexistant     | `{"message": "Ressource introuvable."}`          |
+| `405` | Méthode HTTP non autorisée     | `{"message": "Méthode non autorisée"}`           |
+| `422` | Données invalides              | `message` + détail par champ dans `errors`       |
+
+```json
+{
+  "message": "Le titre du voyage est obligatoire. (et 8 erreurs en plus)",
+  "errors": {
+    "titre": ["Le titre du voyage est obligatoire."],
+    "date_fin": ["La date de retour est obligatoire."],
+    "participation_familiale": ["La participation familiale est obligatoire."]
+  }
+}
+```
+
+## 🧪 Tests
 
 ```bash
 php artisan test
 ```
+
+| Fichier                                  | Ce qui est testé                                                       |
+|------------------------------------------|------------------------------------------------------------------------|
+| `tests/Feature/AccueilTest.php`          | Page d'accueil et prochains voyages                                    |
+| `tests/Feature/VoyageWebTest.php`        | Catalogue (filtres, recherche), fiche, modification, suppression       |
+| `tests/Feature/VoyageCreateTest.php`     | Formulaire de création, message flash, erreurs et saisie conservée     |
+| `tests/Feature/ClasseTest.php`           | Ajout, unicité, renommage, suppression des classes                     |
+| `tests/Feature/PieceAdministrativeTest.php` | Ajout, validation, modification, suppression des pièces             |
+| `tests/Feature/VoyageApiTest.php`        | Toutes les routes de l'API, erreurs 404/405/422 en français            |
+
+## 📁 Structure du projet
+
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── Api/VoyageController.php          # API JSON
+│   │   ├── VoyageController.php              # Pages des voyages
+│   │   ├── ClasseController.php
+│   │   └── PieceAdministrativeController.php
+│   └── Requests/VoyageRequest.php            # Validation commune site + API
+└── Models/                                   # Voyage, Classe, PieceAdministrative
+bootstrap/app.php                             # Réponses JSON 404 / 405 en français
+database/seeders/                             # Classes, pièces et voyages de démonstration
+lang/fr/                                      # Traductions françaises
+resources/
+├── css/site.css, js/site.js                  # Bootstrap 5 + styles du site (Vite)
+└── views/
+    ├── accueil.blade.php
+    ├── voyages/                              # index, show, create, edit, _form
+    ├── classes/                              # index, edit
+    ├── pieces-administratives/               # index, edit
+    └── components/                           # layout, en-têtes, cartes, logo et illustrations SVG
+routes/
+├── web.php                                   # Pages du site
+└── api.php                                   # Route::apiResource('voyages', …)
+```
+
+---
+
+<p align="center">
+  <img src="docs/images/logo.svg" alt="Logo Voyages Scolaires" width="56"><br>
+  <sub>Voyages Scolaires · construit avec Laravel et Bootstrap</sub>
+</p>
