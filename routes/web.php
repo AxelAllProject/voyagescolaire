@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('accueil', [
-        'voyages' => Voyage::whereDate('date_debut', '>=', today())->orderBy('date_debut')->limit(3)->get(),
+        // withCount : la carte d'un voyage affiche le nombre de classes (voir x-voyage-card).
+        'voyages' => Voyage::withCount('classes')->whereDate('date_debut', '>=', today())->orderBy('date_debut')->limit(3)->get(),
         'stats' => [
             'voyages' => Voyage::whereDate('date_fin', '>=', today())->count(),
             'places' => (int) Voyage::whereDate('date_fin', '>=', today())->sum('nb_places'),

@@ -1,5 +1,18 @@
 @props(['voyage', 'variant' => 0])
 
+@php
+    // Le nombre doit venir de withCount('classes') dans la requête : pas de requête par carte,
+    // et pas de « ?? 0 » qui afficherait « aucune classe » en silence si on l'oublie.
+    $nbClasses = $voyage->classes_count
+        ?? throw new LogicException('Chargez les voyages avec withCount(\'classes\') pour afficher leurs cartes.');
+
+    $libelleClasses = match ($nbClasses) {
+        0 => 'Aucune classe',
+        1 => '1 classe',
+        default => "{$nbClasses} classes",
+    };
+@endphp
+
 <article class="card vs-card h-100" data-tilt>
     <a href="{{ route('voyages.show', $voyage) }}" class="vs-card-link d-flex flex-column h-100">
         <div class="vs-card-cover position-relative">
@@ -10,6 +23,10 @@
             <h3 class="h5 fw-bold mb-2">{{ $voyage->titre }}</h3>
             <p class="text-secondary small mb-3">{{ \Illuminate\Support\Str::limit($voyage->description, 110) }}</p>
             <ul class="list-unstyled small text-secondary mb-4">
+                <li class="d-flex align-items-center gap-2 mb-1">
+                    <i class="bi bi-mortarboard text-primary"></i>
+                    {{ $libelleClasses }}
+                </li>
                 <li class="d-flex align-items-center gap-2 mb-1">
                     <i class="bi bi-calendar3 text-primary"></i>
                     Du {{ $voyage->date_debut->translatedFormat('j F') }} au {{ $voyage->date_fin->translatedFormat('j F Y') }}
