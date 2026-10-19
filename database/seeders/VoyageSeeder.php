@@ -82,5 +82,10 @@ class VoyageSeeder extends Seeder
             $voyage->classes()->sync(Classe::whereIn('nom', $donnees['classes'])->pluck('id'));
             $voyage->piecesAdministratives()->sync(PieceAdministrative::whereIn('nom', $donnees['pieces'])->pluck('id'));
         }
+
+        // Voyages générés pour remplir le catalogue (pagination, filtres, statuts).
+        Voyage::factory()->count(6)->avecClassesEtPieces()->create();
+        Voyage::factory()->enCours()->avecClassesEtPieces(1, 2)->create();
+        Voyage::factory()->count(3)->passe()->avecClassesEtPieces()->create();
     }
 }
